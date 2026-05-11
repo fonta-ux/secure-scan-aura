@@ -305,7 +305,7 @@ function FingerprintSVG({ reveal, state }: { reveal: number; state: ScannerState
   const intensity = state === "reading" ? 1 : state === "success" ? 0.95 : 0.7;
   return (
     <motion.svg
-      width="220"
+      width="180"
       height="260"
       viewBox="0 0 220 260"
       fill="none"
