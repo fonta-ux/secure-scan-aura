@@ -134,8 +134,8 @@ export function FingerprintScanner({
               <motion.div
                 className="rounded-full"
                 style={{
-                  width: 220,
-                  height: 220,
+                  width: 180,
+                  height: 180,
                   border: "2px solid color-mix(in oklab, var(--color-success) 80%, transparent)",
                   boxShadow:
                     "0 0 40px color-mix(in oklab, var(--color-success) 50%, transparent)",
