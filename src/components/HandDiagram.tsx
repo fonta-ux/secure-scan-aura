@@ -1,155 +1,161 @@
 import { motion } from "framer-motion";
+import leftHandSvg from "@/assets/mano-izquierda.svg?raw";
+import rightHandSvg from "@/assets/mano-derecha.svg?raw";
 
 interface Props {
   side: "left" | "right";
-  activeFinger?: number; // global finger number 1-10
+  activeFinger?: number;
   completed?: number[];
   skipped?: number[];
 }
 
-// Finger numbering per spec:
-// Left hand: 1 pinky, 2 ring, 3 middle, 4 index, 5 thumb
-// Right hand: 6 thumb, 7 index, 8 middle, 9 ring, 10 pinky
-const LEFT_FINGERS = [
-  { n: 1, name: "pinky" },
-  { n: 2, name: "ring" },
-  { n: 3, name: "middle" },
-  { n: 4, name: "index" },
-  { n: 5, name: "thumb" },
-];
-const RIGHT_FINGERS = [
-  { n: 6, name: "thumb" },
-  { n: 7, name: "index" },
-  { n: 8, name: "middle" },
-  { n: 9, name: "ring" },
-  { n: 10, name: "pinky" },
-];
-
-// Approximate fingertip positions (x, y) for a 220x300 hand SVG, right-hand layout
-// We mirror for left.
-const TIP_POSITIONS_RIGHT: Record<string, { x: number; y: number; tipR: number }> = {
-  thumb: { x: 40, y: 175, tipR: 16 },
-  index: { x: 78, y: 55, tipR: 15 },
-  middle: { x: 118, y: 35, tipR: 15 },
-  ring: { x: 158, y: 55, tipR: 15 },
-  pinky: { x: 192, y: 95, tipR: 14 },
+// Approximate fingertip centroids in the original 683x768 viewBox.
+const TIPS_LEFT: Record<number, { x: number; y: number }> = {
+  1: { x: 145, y: 295 }, // pinky
+  2: { x: 226, y: 205 }, // ring
+  3: { x: 314, y: 165 }, // middle
+  4: { x: 411, y: 195 }, // index
+  5: { x: 510, y: 410 }, // thumb
+};
+const TIPS_RIGHT: Record<number, { x: number; y: number }> = {
+  6: { x: 175, y: 410 }, // thumb
+  7: { x: 271, y: 200 }, // index
+  8: { x: 368, y: 168 }, // middle
+  9: { x: 457, y: 207 }, // ring
+  10: { x: 538, y: 300 }, // pinky
 };
 
+const VB_W = 683;
+const VB_H = 768;
+
 export function HandDiagram({ side, activeFinger, completed = [], skipped = [] }: Props) {
-  const fingers = side === "left" ? LEFT_FINGERS : RIGHT_FINGERS;
-  const mirror = side === "left";
+  const isLeft = side === "left";
+  const tips = isLeft ? TIPS_LEFT : TIPS_RIGHT;
+  const raw = isLeft ? leftHandSvg : rightHandSvg;
+
+  // Inject dynamic colors into the SVG markup:
+  //  - .cls-2 (fingers / contour) → muted institutional gray
+  //  - .cls-1 (capturas / fingertip pads) → default border tone; tinted per-state via overlay below
+  const themedSvg = raw
+    .replace(/fill:\s*#7e7e7e;?/gi, "fill: oklch(0.78 0.01 240);")
+    .replace(/fill:\s*#06aec3;?/gi, "fill: color-mix(in oklab, var(--color-scanner) 18%, white);");
 
   return (
-    <div className="relative w-[260px] h-[340px] select-none">
+    <div className="relative w-[300px] aspect-[683/768] select-none">
+      {/* Hand illustration */}
+      <div
+        className="absolute inset-0"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: themedSvg }}
+      />
+
+      {/* Per-finger overlay (highlight active capture + numbered chip) */}
       <svg
-        viewBox="0 0 220 300"
-        width="100%"
-        height="100%"
-        style={{ transform: mirror ? "scaleX(-1)" : undefined }}
+        viewBox={`0 0 ${VB_W} ${VB_H}`}
+        className="absolute inset-0 w-full h-full pointer-events-none"
       >
-        <defs>
-          <linearGradient id={`palm-${side}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--color-surface-elevated)" />
-            <stop offset="100%" stopColor="var(--color-surface)" />
-          </linearGradient>
-        </defs>
-
-        {/* Palm + fingers silhouette */}
-        <g
-          fill={`url(#palm-${side})`}
-          stroke="color-mix(in oklab, var(--color-foreground) 14%, transparent)"
-          strokeWidth="1.2"
-        >
-          {/* Palm */}
-          <path d="M50 130 C 50 100, 60 90, 75 90 L 150 90 C 175 90, 185 110, 185 140 L 185 230 C 185 270, 160 290, 120 290 C 75 290, 50 270, 50 230 Z" />
-          {/* Thumb */}
-          <path d="M50 140 C 30 150, 22 165, 28 185 C 32 200, 45 205, 55 200 L 60 165 Z" />
-          {/* Index */}
-          <path d="M68 95 C 68 70, 70 45, 78 35 C 86 28, 94 32, 95 50 L 95 100 Z" />
-          {/* Middle */}
-          <path d="M105 90 C 105 60, 110 30, 118 22 C 126 16, 134 22, 134 45 L 134 95 Z" />
-          {/* Ring */}
-          <path d="M142 92 C 142 60, 148 40, 156 35 C 164 32, 170 40, 170 60 L 170 100 Z" />
-          {/* Pinky */}
-          <path d="M174 105 C 178 85, 184 75, 190 75 C 196 76, 200 85, 198 100 L 192 130 Z" />
-        </g>
-
-        {/* Fingertip indicators */}
-        {fingers.map((f) => {
-          const pos = TIP_POSITIONS_RIGHT[f.name];
-          const isActive = activeFinger === f.n;
-          const isDone = completed.includes(f.n);
-          const isSkipped = skipped.includes(f.n);
+        {Object.entries(tips).map(([n, p]) => {
+          const num = Number(n);
+          const isActive = activeFinger === num;
+          const isDone = completed.includes(num);
+          const isSkipped = skipped.includes(num);
           const color = isDone
             ? "var(--color-success)"
             : isSkipped
             ? "color-mix(in oklab, var(--color-foreground) 30%, transparent)"
             : isActive
             ? "var(--color-scanner)"
-            : "color-mix(in oklab, var(--color-foreground) 14%, transparent)";
+            : "transparent";
 
           return (
-            <g key={f.n}>
-              <circle
-                cx={pos.x}
-                cy={pos.y}
-                r={pos.tipR}
-                fill={isActive ? "color-mix(in oklab, var(--color-scanner) 22%, transparent)" : "transparent"}
-                stroke={color}
-                strokeWidth={isActive ? 2 : 1.4}
-              />
+            <g key={n}>
+              {/* Pulsing ring on active finger */}
               {isActive && (
+                <>
+                  <circle
+                    cx={p.x}
+                    cy={p.y}
+                    r={48}
+                    fill="color-mix(in oklab, var(--color-scanner) 18%, transparent)"
+                    stroke="var(--color-scanner)"
+                    strokeWidth={2.5}
+                  />
+                  <circle
+                    cx={p.x}
+                    cy={p.y}
+                    r={48}
+                    fill="none"
+                    stroke="var(--color-scanner)"
+                    strokeOpacity={0.6}
+                    strokeWidth={2}
+                  >
+                    <animate attributeName="r" values="44;70;44" dur="2.2s" repeatCount="indefinite" />
+                    <animate attributeName="stroke-opacity" values="0.7;0;0.7" dur="2.2s" repeatCount="indefinite" />
+                  </circle>
+                </>
+              )}
+              {/* Status outline ring for done / skipped */}
+              {(isDone || isSkipped) && (
                 <circle
-                  cx={pos.x}
-                  cy={pos.y}
-                  r={pos.tipR + 6}
-                  fill="none"
-                  stroke="var(--color-scanner)"
-                  strokeOpacity="0.5"
-                  strokeWidth="1"
-                >
-                  <animate attributeName="r" values={`${pos.tipR + 4};${pos.tipR + 12};${pos.tipR + 4}`} dur="2s" repeatCount="indefinite" />
-                  <animate attributeName="stroke-opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite" />
-                </circle>
+                  cx={p.x}
+                  cy={p.y}
+                  r={44}
+                  fill={
+                    isDone
+                      ? "color-mix(in oklab, var(--color-success) 14%, transparent)"
+                      : "transparent"
+                  }
+                  stroke={color}
+                  strokeWidth={2.5}
+                  strokeDasharray={isSkipped ? "6 6" : undefined}
+                />
               )}
             </g>
           );
         })}
       </svg>
 
-      {/* Finger number labels (rendered outside flipped svg so digits remain readable) */}
-      {fingers.map((f) => {
-        const pos = TIP_POSITIONS_RIGHT[f.name];
-        // Convert SVG coords to container px (svg is 100% width of 260px container, viewBox 220)
-        const scale = 260 / 220;
-        const x = mirror ? (220 - pos.x) * scale : pos.x * scale;
-        const y = pos.y * (340 / 300);
-        const isActive = activeFinger === f.n;
-        const isDone = (completed ?? []).includes(f.n);
+      {/* Numbered chips (HTML for crisp text & easy animation) */}
+      {Object.entries(tips).map(([n, p]) => {
+        const num = Number(n);
+        const isActive = activeFinger === num;
+        const isDone = completed.includes(num);
+        const isSkipped = skipped.includes(num);
         return (
           <motion.div
-            key={f.n}
-            className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full text-[11px] font-semibold tabular-nums"
+            key={n}
+            className="absolute flex items-center justify-center rounded-full text-[12px] font-semibold tabular-nums shadow-sm"
             style={{
-              left: x,
-              top: y,
-              width: 22,
-              height: 22,
+              left: `${(p.x / VB_W) * 100}%`,
+              top: `${(p.y / VB_H) * 100}%`,
+              transform: "translate(-50%, -50%)",
+              width: 26,
+              height: 26,
               background: isActive
                 ? "var(--color-scanner)"
                 : isDone
                 ? "var(--color-success)"
-                : "color-mix(in oklab, var(--color-surface-elevated) 90%, transparent)",
-              color: isActive || isDone ? "var(--color-primary-foreground)" : "var(--color-muted-foreground)",
-              border: `1px solid ${isActive ? "var(--color-scanner)" : "var(--color-border)"}`,
+                : isSkipped
+                ? "var(--color-muted)"
+                : "var(--color-surface)",
+              color: isActive || isDone
+                ? "var(--color-primary-foreground)"
+                : "var(--color-foreground)",
+              border: `1.5px solid ${
+                isActive
+                  ? "var(--color-scanner)"
+                  : isDone
+                  ? "var(--color-success)"
+                  : "var(--color-border)"
+              }`,
               boxShadow: isActive
                 ? "0 0 0 4px color-mix(in oklab, var(--color-scanner) 18%, transparent)"
-                : "none",
+                : undefined,
             }}
-            animate={{ scale: isActive ? 1.1 : 1 }}
+            animate={{ scale: isActive ? 1.15 : 1 }}
             transition={{ duration: 0.3 }}
           >
-            {f.n}
+            {num}
           </motion.div>
         );
       })}
