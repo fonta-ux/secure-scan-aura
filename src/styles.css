@@ -38,31 +38,31 @@
 
 :root {
   --radius: 0.75rem;
-  /* Dark institutional palette */
-  --background: oklch(0.18 0.02 240);
-  --foreground: oklch(0.96 0.005 240);
-  --surface: oklch(0.22 0.02 240);
-  --surface-elevated: oklch(0.26 0.025 240);
-  --card: oklch(0.22 0.02 240);
-  --card-foreground: oklch(0.96 0.005 240);
-  --popover: oklch(0.22 0.02 240);
-  --popover-foreground: oklch(0.96 0.005 240);
-  --primary: oklch(0.78 0.14 220);
-  --primary-foreground: oklch(0.15 0.02 240);
-  --secondary: oklch(0.3 0.025 240);
-  --secondary-foreground: oklch(0.96 0.005 240);
-  --muted: oklch(0.28 0.02 240);
-  --muted-foreground: oklch(0.7 0.02 240);
-  --accent: oklch(0.3 0.04 220);
-  --accent-foreground: oklch(0.96 0.005 240);
-  --destructive: oklch(0.65 0.2 25);
-  --destructive-foreground: oklch(0.98 0.005 240);
-  --border: oklch(0.32 0.02 240);
-  --input: oklch(0.3 0.02 240);
-  --ring: oklch(0.78 0.14 220);
-  --scanner: oklch(0.82 0.15 215);
-  --scanner-glow: oklch(0.75 0.18 210);
-  --success: oklch(0.78 0.17 165);
+  /* Light institutional palette — Gobierno PBA */
+  --background: oklch(0.985 0.003 240);
+  --foreground: oklch(0.22 0.03 240);
+  --surface: oklch(1 0 0);
+  --surface-elevated: oklch(0.99 0.004 240);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.03 240);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.03 240);
+  --primary: oklch(0.45 0.12 235);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.96 0.005 240);
+  --secondary-foreground: oklch(0.28 0.03 240);
+  --muted: oklch(0.96 0.005 240);
+  --muted-foreground: oklch(0.5 0.02 240);
+  --accent: oklch(0.94 0.02 230);
+  --accent-foreground: oklch(0.28 0.04 235);
+  --destructive: oklch(0.6 0.21 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.92 0.006 240);
+  --input: oklch(0.92 0.006 240);
+  --ring: oklch(0.55 0.15 235);
+  --scanner: oklch(0.55 0.15 235);
+  --scanner-glow: oklch(0.7 0.16 225);
+  --success: oklch(0.62 0.16 155);
 }
 
 .dark {
@@ -73,7 +73,7 @@
 @layer base {
   * { border-color: var(--color-border); }
   body {
-    background: radial-gradient(ellipse at top, oklch(0.22 0.03 230) 0%, var(--color-background) 60%);
+    background: var(--color-background);
     color: var(--color-foreground);
     font-family: ui-sans-serif, system-ui, -apple-system, "Inter", sans-serif;
     min-height: 100vh;
