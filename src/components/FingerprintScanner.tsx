@@ -51,16 +51,15 @@ export function FingerprintScanner({
       : `${totalCaptures} muestras necesarias`;
 
   return (
-    <div className="relative flex flex-col items-center justify-center gap-6 w-[340px]">
-      {/* Scanner module */}
+    <div className="relative flex flex-col items-center justify-center gap-6 w-[280px]">
+      {/* Scanner module — Fibonacci proportions (233 × 377, golden ratio φ≈1.618) */}
       <div
-        className="relative w-[300px] h-[360px] rounded-[2rem] overflow-hidden"
+        className="relative w-[233px] h-[377px] rounded-[1.75rem] overflow-hidden"
         style={{
           background:
-            "linear-gradient(180deg, color-mix(in oklab, var(--color-surface-elevated) 95%, transparent), color-mix(in oklab, var(--color-surface) 95%, transparent))",
+            "linear-gradient(180deg, var(--color-surface), var(--color-surface-elevated))",
           boxShadow:
-            "0 0 0 1px color-mix(in oklab, var(--color-scanner) 18%, transparent), 0 30px 80px -20px color-mix(in oklab, var(--color-scanner-glow) 35%, transparent), inset 0 1px 0 color-mix(in oklab, white 6%, transparent)",
-          backdropFilter: "blur(20px)",
+            "0 0 0 1px var(--color-border), 0 24px 60px -28px color-mix(in oklab, var(--color-scanner) 28%, transparent), inset 0 1px 0 oklch(1 0 0 / 0.6)",
         }}
       >
         {/* Ambient glow */}
