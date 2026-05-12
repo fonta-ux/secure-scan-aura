@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useCallback } from "react";
-import { ArrowLeft } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { FingerprintScanner, type ScannerState } from "@/components/FingerprintScanner";
 import { HandDiagram } from "@/components/HandDiagram";
+import sibLogo from "@/assets/sib-logo.svg";
+import footerPba from "@/assets/footer-pba.svg";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -30,7 +32,7 @@ const FINGER_LABELS: Record<number, string> = {
 function Index() {
   const [activeFinger, setActiveFinger] = useState(1);
   const [state, setState] = useState<ScannerState>("idle");
-  const [captureIndex, setCaptureIndex] = useState(0); // captures done for current finger
+  const [captureIndex, setCaptureIndex] = useState(0);
   const [completed, setCompleted] = useState<number[]>([]);
   const [skipped, setSkipped] = useState<number[]>([]);
 
@@ -40,7 +42,6 @@ function Index() {
     setActiveFinger((f) => Math.min(10, f + 1));
   }, []);
 
-  // Simulated capture cycle (replace with real biometric hardware events)
   useEffect(() => {
     if (state !== "idle") return;
     const t = setTimeout(() => setState("reading"), 2400);
@@ -66,47 +67,50 @@ function Index() {
         setState("idle");
       }
     }, 1200);
-    return () => clearTimeout(t);
   }, [state, captureIndex, activeFinger, advanceFinger]);
 
-  const handleSkip = () => setState("missing");
-  const handleContinue = () => {
+  const handleSkip = () => {
     setSkipped((arr) => [...arr, activeFinger]);
     advanceFinger();
   };
+  const handleScan = () => {
+    if (state === "idle") setState("reading");
+  };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-8 py-5 border-b border-border/60">
-        <div className="flex items-center gap-6">
-          <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            Volver
-          </button>
-          <nav className="flex items-center gap-5 text-sm">
-            <span className="text-foreground font-medium">Internos</span>
-            <span className="text-muted-foreground">Visitas</span>
+    <div className="min-h-screen flex flex-col bg-background font-sans">
+      {/* Header */}
+      <header className="flex items-center justify-between px-10 py-5 bg-white border-b border-border/60">
+        <div className="flex items-center gap-10">
+          <img src={sibLogo} alt="SIB - Sistema de identificación Biometrica" className="h-8 w-auto" />
+          <nav className="flex items-center gap-2">
+            <button
+              className="px-5 py-2 rounded-md text-sm font-semibold text-[var(--color-scanner)] bg-[color-mix(in_oklab,var(--color-scanner)_10%,transparent)]"
+              aria-current="page"
+            >
+              Internos
+            </button>
+            <button className="px-5 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              Visitas
+            </button>
           </nav>
         </div>
-        <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          Gobierno de la provincia de Buenos Aires
-        </div>
-        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <button className="flex items-center gap-2 text-sm font-medium text-[var(--color-scanner)] hover:opacity-80 transition-opacity">
+          <LogOut className="w-4 h-4" />
           Cerrar sesión
         </button>
       </header>
 
       {/* Title */}
-      <div className="text-center pt-10 pb-6">
-        <h1 className="text-3xl font-semibold tracking-tight">Escanear huellas</h1>
+      <div className="text-center pt-10 pb-8">
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground">Escanear huellas</h1>
         <p className="text-muted-foreground text-sm mt-2">
           Tomá 3 muestras de cada dedo. Apoyá y levantá entre cada lectura.
         </p>
       </div>
 
       {/* Main: hand — scanner — hand */}
-      <main className="flex-1 flex items-center justify-center gap-10 px-8 pb-12">
+      <main className="flex-1 flex items-center justify-center gap-12 px-8 pb-12">
         <HandDiagram
           side="left"
           activeFinger={activeFinger <= 5 ? activeFinger : undefined}
@@ -119,7 +123,7 @@ function Index() {
           fingerLabel={FINGER_LABELS[activeFinger] ?? "el dedo"}
           captureIndex={captureIndex}
           onSkip={handleSkip}
-          onContinue={handleContinue}
+          onScan={handleScan}
         />
 
         <HandDiagram
@@ -130,9 +134,15 @@ function Index() {
         />
       </main>
 
-      {/* Footer status */}
-      <footer className="px-8 py-4 flex items-center justify-center text-xs text-muted-foreground border-t border-border/60">
+      {/* Status row */}
+      <div className="px-10 pb-6 text-center text-xs text-muted-foreground">
         Dedo {activeFinger} de 10 · {completed.length} completados · {skipped.length} omitidos
+      </div>
+
+      {/* Footer */}
+      <footer className="flex items-center justify-between px-10 py-5 bg-white border-t border-border/60">
+        <img src={footerPba} alt="Gobierno de la provincia de Buenos Aires" className="h-8 w-auto" />
+        <span className="text-sm text-muted-foreground">Gobierno de la provincia de Buenos Aires</span>
       </footer>
     </div>
   );
