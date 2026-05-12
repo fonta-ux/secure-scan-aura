@@ -10,7 +10,7 @@ interface Props {
   captureIndex: number; // 0..3 (completed)
   totalCaptures?: number;
   onSkip?: () => void;
-  onContinue?: () => void;
+  onScan?: () => void;
 }
 
 export function FingerprintScanner({
@@ -19,7 +19,7 @@ export function FingerprintScanner({
   captureIndex,
   totalCaptures = 3,
   onSkip,
-  onContinue,
+  onScan,
 }: Props) {
   const progressPct = Math.min(1, captureIndex / totalCaptures);
   // Progressive reveal: 30% / 70% / 100%
@@ -283,41 +283,27 @@ export function FingerprintScanner({
         })}
       </div>
 
-      {/* Secondary CTA */}
-      <div className="flex gap-3 h-9">
-        <AnimatePresence>
-          {state === "missing" ? (
-            <motion.button
-              key="continue"
-              onClick={onContinue}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="px-5 py-2 rounded-full text-sm font-medium transition-colors"
-              style={{
-                background: "var(--color-scanner)",
-                color: "var(--color-primary-foreground)",
-              }}
-            >
-              Continuar
-            </motion.button>
-          ) : (
-            <motion.button
-              key="skip"
-              onClick={onSkip}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="px-5 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              style={{
-                border: "1px solid var(--color-border)",
-                background: "color-mix(in oklab, var(--color-surface) 60%, transparent)",
-              }}
-            >
-              No registra
-            </motion.button>
-          )}
-        </AnimatePresence>
+      {/* Action buttons — institutional teal */}
+      <div className="flex flex-col gap-3 w-[180px] pt-1">
+        <button
+          onClick={onScan}
+          disabled={state === "reading"}
+          className="h-12 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          style={{ background: "var(--color-scanner)" }}
+        >
+          Escanear huella
+        </button>
+        <button
+          onClick={onSkip}
+          className="h-12 rounded-lg text-sm font-semibold transition-colors hover:bg-[color-mix(in_oklab,var(--color-scanner)_8%,transparent)]"
+          style={{
+            border: "1px solid var(--color-scanner)",
+            color: "var(--color-scanner)",
+            background: "transparent",
+          }}
+        >
+          No registra
+        </button>
       </div>
     </div>
   );
