@@ -43,7 +43,7 @@ function Index() {
   // Simulated capture cycle (replace with real biometric hardware events)
   useEffect(() => {
     if (state !== "idle") return;
-    const t = setTimeout(() => setState("reading"), 1800);
+    const t = setTimeout(() => setState("reading"), 2400);
     return () => clearTimeout(t);
   }, [state, activeFinger]);
 
@@ -52,7 +52,7 @@ function Index() {
     const t = setTimeout(() => {
       setState("success");
       setCaptureIndex((c) => c + 1);
-    }, 1600);
+    }, 2200);
     return () => clearTimeout(t);
   }, [state]);
 
@@ -65,7 +65,7 @@ function Index() {
       } else {
         setState("idle");
       }
-    }, 900);
+    }, 1200);
     return () => clearTimeout(t);
   }, [state, captureIndex, activeFinger, advanceFinger]);
 
