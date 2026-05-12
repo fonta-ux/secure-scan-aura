@@ -3,8 +3,8 @@ import { useEffect, useState, useCallback } from "react";
 import { LogOut } from "lucide-react";
 import { FingerprintScanner, type ScannerState } from "@/components/FingerprintScanner";
 import { HandDiagram } from "@/components/HandDiagram";
-import sibLogo from "@/assets/sib-logo.svg";
-import footerPba from "@/assets/footer-pba.svg";
+import sibLogo from "@/assets/footer-pba.svg";
+import footerPba from "@/assets/sib-logo.svg";
 
 export const Route = createFileRoute("/")({
   component: Index,
