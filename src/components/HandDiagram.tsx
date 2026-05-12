@@ -25,6 +25,20 @@ const TIPS_RIGHT: Record<number, { x: number; y: number }> = {
   10: { x: 538, y: 300 }, // pinky
 };
 
+// Number badge offsets — placed ABOVE the fingertip (above the nail).
+const CHIP_OFFSETS: Record<number, { dx: number; dy: number }> = {
+  1: { dx: -10, dy: -68 },
+  2: { dx: 0, dy: -72 },
+  3: { dx: 0, dy: -72 },
+  4: { dx: 0, dy: -72 },
+  5: { dx: 60, dy: -30 },
+  6: { dx: -60, dy: -30 },
+  7: { dx: 0, dy: -72 },
+  8: { dx: 0, dy: -72 },
+  9: { dx: 0, dy: -72 },
+  10: { dx: 10, dy: -68 },
+};
+
 const VB_W = 683;
 const VB_H = 768;
 
@@ -115,19 +129,22 @@ export function HandDiagram({ side, activeFinger, completed = [], skipped = [] }
         })}
       </svg>
 
-      {/* Numbered chips (HTML for crisp text & easy animation) */}
+      {/* Numbered chips — positioned ABOVE each fingertip */}
       {Object.entries(tips).map(([n, p]) => {
         const num = Number(n);
         const isActive = activeFinger === num;
         const isDone = completed.includes(num);
         const isSkipped = skipped.includes(num);
+        const off = CHIP_OFFSETS[num] ?? { dx: 0, dy: -60 };
+        const cx = p.x + off.dx;
+        const cy = p.y + off.dy;
         return (
           <motion.div
             key={n}
             className="absolute flex items-center justify-center rounded-full text-[12px] font-semibold tabular-nums shadow-sm"
             style={{
-              left: `${(p.x / VB_W) * 100}%`,
-              top: `${(p.y / VB_H) * 100}%`,
+              left: `${(cx / VB_W) * 100}%`,
+              top: `${(cy / VB_H) * 100}%`,
               transform: "translate(-50%, -50%)",
               width: 26,
               height: 26,
