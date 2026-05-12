@@ -89,8 +89,8 @@ export function HandDiagram({ side, activeFinger, completed = [], skipped = [] }
                     strokeOpacity={0.6}
                     strokeWidth={2}
                   >
-                    <animate attributeName="r" values="44;70;44" dur="2.2s" repeatCount="indefinite" />
-                    <animate attributeName="stroke-opacity" values="0.7;0;0.7" dur="2.2s" repeatCount="indefinite" />
+                    <animate attributeName="r" values="44;70;44" dur="3.4s" repeatCount="indefinite" />
+                    <animate attributeName="stroke-opacity" values="0.7;0;0.7" dur="3.4s" repeatCount="indefinite" />
                   </circle>
                 </>
               )}
