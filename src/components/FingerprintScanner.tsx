@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
-import scannerMark from "@/assets/scanner-mark.png";
+import scannerMark from "@/assets/scanner-mark.svg";
 
 export type ScannerState = "idle" | "reading" | "success" | "missing";
 
