@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Fingerprint as FpIcon } from "lucide-react";
+import { Check } from "lucide-react";
+import scannerMark from "@/assets/scanner-mark.png";
 
 export type ScannerState = "idle" | "reading" | "success" | "missing";
 
@@ -51,10 +52,10 @@ export function FingerprintScanner({
       : `${totalCaptures} muestras necesarias`;
 
   return (
-    <div className="relative flex flex-col items-center justify-center gap-6 w-[280px]">
-      {/* Scanner module — Fibonacci proportions (233 × 377, golden ratio φ≈1.618) */}
+    <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">
+      {/* Scanner module — Fibonacci proportions, smaller than hand (φ≈1.618) */}
       <div
-        className="relative w-[233px] h-[377px] rounded-[1.75rem] overflow-hidden"
+        className="relative w-[180px] h-[291px] rounded-[1.5rem] overflow-hidden"
         style={{
           background:
             "linear-gradient(180deg, var(--color-surface), var(--color-surface-elevated))",
@@ -94,9 +95,30 @@ export function FingerprintScanner({
           }}
         />
 
-        {/* Fingerprint SVG */}
+        {/* Fingerprint mark */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <FingerprintSVG reveal={reveal} state={state} />
+          <motion.img
+            src={scannerMark}
+            alt=""
+            aria-hidden
+            className="w-[60%] h-auto select-none pointer-events-none"
+            style={{
+              filter:
+                state === "success"
+                  ? "drop-shadow(0 0 12px color-mix(in oklab, var(--color-success) 60%, transparent))"
+                  : "drop-shadow(0 0 14px color-mix(in oklab, var(--color-scanner-glow) 60%, transparent))",
+              opacity: state === "missing" ? 0.25 : reveal * 0.4 + 0.55,
+            }}
+            animate={{
+              scale: state === "reading" ? [1, 1.04, 1] : 1,
+              opacity: state === "reading" ? [0.85, 1, 0.85] : undefined,
+            }}
+            transition={{
+              duration: 3.2,
+              repeat: state === "reading" ? Infinity : 0,
+              ease: "easeInOut",
+            }}
+          />
         </div>
 
         {/* Scan line */}
@@ -114,7 +136,7 @@ export function FingerprintScanner({
             initial={{ top: "20%" }}
             animate={{ top: state === "reading" ? ["20%", "80%", "20%"] : ["18%", "82%", "18%"] }}
             transition={{
-              duration: state === "reading" ? 1.2 : 2.5,
+              duration: state === "reading" ? 2.4 : 4,
               repeat: Infinity,
               ease: "easeInOut",
             }}
