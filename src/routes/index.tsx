@@ -60,9 +60,10 @@ function Index() {
         setCompleted((arr) => [...arr, activeFinger]);
         advanceFinger();
       } else {
-        setState("idle");
+        setState("reading");
       }
     }, 2400);
+    return () => clearTimeout(t);
   }, [state, captureIndex, activeFinger, advanceFinger]);
 
   const handleSkip = () => {
