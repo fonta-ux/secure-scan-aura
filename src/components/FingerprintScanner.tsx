@@ -112,7 +112,7 @@ export function FingerprintScanner({
             animate={{
               scale: state === "reading" ? [1, 1.04, 1] : 1,
               opacity:
-                state === "success" && captureIndex >= totalCaptures
+                state === "success"
                   ? 0
                   : state === "reading"
                   ? [0.85, 1, 0.85]
