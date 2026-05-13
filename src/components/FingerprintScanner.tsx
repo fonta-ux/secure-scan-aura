@@ -60,7 +60,7 @@ export function FingerprintScanner({
     }
 
     setShowSuccessCheck(false);
-    const timer = window.setTimeout(() => setShowSuccessCheck(true), 1000);
+    const timer = window.setTimeout(() => setShowSuccessCheck(true), 250);
     return () => window.clearTimeout(timer);
   }, [state, captureIndex]);
 
