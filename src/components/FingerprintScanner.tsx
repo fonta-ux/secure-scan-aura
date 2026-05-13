@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
+import { useEffect, useState } from "react";
 import scannerMark from "@/assets/scanner-mark.svg";
 
 export type ScannerState = "idle" | "reading" | "success" | "missing";
@@ -21,6 +22,7 @@ export function FingerprintScanner({
   onSkip,
   onScan,
 }: Props) {
+  const [showSuccessCheck, setShowSuccessCheck] = useState(false);
   const progressPct = Math.min(1, captureIndex / totalCaptures);
   // Progressive reveal: 30% / 70% / 100%
   const reveal = state === "success" && captureIndex >= totalCaptures
@@ -50,6 +52,17 @@ export function FingerprintScanner({
       : state === "missing"
       ? "Podés continuar con el siguiente"
       : `${totalCaptures} muestras necesarias`;
+
+  useEffect(() => {
+    if (state !== "success") {
+      setShowSuccessCheck(false);
+      return;
+    }
+
+    setShowSuccessCheck(false);
+    const timer = window.setTimeout(() => setShowSuccessCheck(true), 1000);
+    return () => window.clearTimeout(timer);
+  }, [state, captureIndex]);
 
   return (
     <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">
@@ -119,9 +132,16 @@ export function FingerprintScanner({
                   : undefined,
             }}
             transition={{
-              duration: 3.2,
-              repeat: state === "reading" ? Infinity : 0,
-              ease: "easeInOut",
+              scale: {
+                duration: 3.2,
+                repeat: state === "reading" ? Infinity : 0,
+                ease: "easeInOut",
+              },
+              opacity: {
+                duration: state === "success" ? 0.2 : 3.2,
+                repeat: state === "reading" ? Infinity : 0,
+                ease: "easeInOut",
+              },
             }}
           />
         </div>
@@ -150,7 +170,7 @@ export function FingerprintScanner({
 
         {/* Success ripple */}
         <AnimatePresence>
-          {state === "success" && (
+          {showSuccessCheck && (
             <motion.div
               key={`ripple-${captureIndex}`}
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
