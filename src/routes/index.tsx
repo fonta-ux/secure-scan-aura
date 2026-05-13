@@ -42,11 +42,7 @@ function Index() {
     setActiveFinger((f) => Math.min(10, f + 1));
   }, []);
 
-  useEffect(() => {
-    if (state !== "idle") return;
-    const t = setTimeout(() => setState("reading"), 2400);
-    return () => clearTimeout(t);
-  }, [state, activeFinger]);
+  // El escaneo solo arranca cuando el usuario presiona "Escanear huella"
 
   useEffect(() => {
     if (state !== "reading") return;
