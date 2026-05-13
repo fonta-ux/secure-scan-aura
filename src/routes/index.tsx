@@ -66,7 +66,7 @@ function Index() {
       } else {
         setState("idle");
       }
-    }, 1200);
+    }, 2400);
   }, [state, captureIndex, activeFinger, advanceFinger]);
 
   const handleSkip = () => {
