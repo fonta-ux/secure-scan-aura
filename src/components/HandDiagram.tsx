@@ -154,7 +154,7 @@ export function HandDiagram({ side, activeFinger, completed = [], skipped = [] }
                 ? "var(--color-success)"
                 : isSkipped
                 ? "var(--color-muted)"
-                : "var(--color-surface)",
+                : "color-mix(in oklab, var(--color-foreground) 10%, transparent)",
               color: isActive || isDone
                 ? "var(--color-primary-foreground)"
                 : "var(--color-foreground)",
