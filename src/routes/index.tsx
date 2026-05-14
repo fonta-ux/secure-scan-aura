@@ -104,18 +104,20 @@ function Index() {
           <DropdownMenuTrigger asChild>
             <button
               className="flex flex-row items-center gap-2.5 pl-[9px] pr-[5px] py-[5px] rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.05)] hover:opacity-90 transition-opacity outline-none"
-              style={{ background: "#E9F7FB", height: 48, width: 167 }}
+              style={{ background: "#E9F7FB", height: 48, width: 212 }}
               aria-label="Menú de usuario Gerónimo Venzi"
             >
               <span
-                className="relative flex items-center justify-center rounded-full text-white font-medium"
+                className="relative flex items-center justify-center rounded-full text-white shrink-0"
                 style={{
                   width: 38,
                   height: 38,
                   background: "#00ADC1",
                   fontFamily: "Inter, sans-serif",
-                  fontSize: 16,
+                  fontWeight: 700,
+                  fontSize: 14,
                   lineHeight: "140%",
+                  letterSpacing: "0.02em",
                 }}
               >
                 GV
@@ -137,8 +139,8 @@ function Index() {
                   style={{
                     fontFamily: "Inter, sans-serif",
                     fontWeight: 500,
-                    fontSize: 14,
-                    lineHeight: "21px",
+                    fontSize: 16,
+                    lineHeight: "140%",
                     color: "#26292A",
                   }}
                 >
