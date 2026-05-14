@@ -51,7 +51,7 @@ export function HandDiagram({ side, activeFinger, completed = [], skipped = [] }
   //  - .cls-2 (fingers / contour) → muted institutional gray
   //  - .cls-1 (capturas / fingertip pads) → default border tone; tinted per-state via overlay below
   const themedSvg = raw
-    .replace(/fill:\s*#7e7e7e;?/gi, "fill: oklch(0.78 0.01 240);")
+    .replace(/fill:\s*#7e7e7e;?/gi, "fill: color-mix(in oklab, oklch(0.78 0.01 240) 10%, transparent);")
     .replace(/fill:\s*#06aec3;?/gi, "fill: color-mix(in oklab, var(--color-scanner) 18%, white);");
 
   return (
