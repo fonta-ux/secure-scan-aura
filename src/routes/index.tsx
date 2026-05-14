@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useCallback } from "react";
-import { LogOut } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { FingerprintScanner, type ScannerState } from "@/components/FingerprintScanner";
 import { HandDiagram } from "@/components/HandDiagram";
 import sibLogo from "@/assets/footer-pba.svg";
@@ -92,9 +92,40 @@ function Index() {
             </button>
           </nav>
         </div>
-        <button className="flex items-center gap-2 text-sm font-medium text-[var(--color-scanner)] hover:opacity-80 transition-opacity">
-          <LogOut className="w-4 h-4" />
-          Cerrar sesión
+        {/* avatar_usuario_nombre_rol */}
+        <button
+          className="flex flex-row items-center gap-2.5 pl-[9px] pr-[5px] py-[5px] rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.05)] hover:opacity-90 transition-opacity"
+          style={{ background: "#E9F7FB", height: 48, width: 167 }}
+          aria-label="Menú de usuario Luis Miguel"
+        >
+          <span
+            className="flex items-center justify-center rounded-full text-white font-bold"
+            style={{
+              width: 38,
+              height: 38,
+              background: "#00ADC1",
+              fontFamily: "Inter, sans-serif",
+              fontSize: 14,
+              letterSpacing: "0.02em",
+              lineHeight: "140%",
+            }}
+          >
+            LM
+          </span>
+          <span className="flex flex-row items-center gap-2.5">
+            <span
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontWeight: 500,
+                fontSize: 14,
+                lineHeight: "21px",
+                color: "#26292A",
+              }}
+            >
+              Luis Miguel
+            </span>
+            <ChevronDown className="w-3 h-3" strokeWidth={2} style={{ color: "#00ADC1" }} />
+          </span>
         </button>
       </header>
 
