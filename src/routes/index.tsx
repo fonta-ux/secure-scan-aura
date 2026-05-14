@@ -1,6 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useCallback } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, UserRound, Lock, LogOut, Bell } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { FingerprintScanner, type ScannerState } from "@/components/FingerprintScanner";
 import { HandDiagram } from "@/components/HandDiagram";
 import sibLogo from "@/assets/footer-pba.svg";
