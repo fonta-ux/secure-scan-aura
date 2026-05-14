@@ -100,40 +100,95 @@ function Index() {
           </nav>
         </div>
         {/* avatar_usuario_nombre_rol */}
-        <button
-          className="flex flex-row items-center gap-2.5 pl-[9px] pr-[5px] py-[5px] rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.05)] hover:opacity-90 transition-opacity"
-          style={{ background: "#E9F7FB", height: 48, width: 167 }}
-          aria-label="Menú de usuario Luis Miguel"
-        >
-          <span
-            className="flex items-center justify-center rounded-full text-white font-bold"
-            style={{
-              width: 38,
-              height: 38,
-              background: "#00ADC1",
-              fontFamily: "Inter, sans-serif",
-              fontSize: 14,
-              letterSpacing: "0.02em",
-              lineHeight: "140%",
-            }}
-          >
-            LM
-          </span>
-          <span className="flex flex-row items-center gap-2.5">
-            <span
-              style={{
-                fontFamily: "Inter, sans-serif",
-                fontWeight: 500,
-                fontSize: 14,
-                lineHeight: "21px",
-                color: "#26292A",
-              }}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className="flex flex-row items-center gap-2.5 pl-[9px] pr-[5px] py-[5px] rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.05)] hover:opacity-90 transition-opacity outline-none"
+              style={{ background: "#E9F7FB", height: 48, width: 167 }}
+              aria-label="Menú de usuario Gerónimo Venzi"
             >
-              Luis Miguel
-            </span>
-            <ChevronDown className="w-3 h-3" strokeWidth={2} style={{ color: "#00ADC1" }} />
-          </span>
-        </button>
+              <span
+                className="relative flex items-center justify-center rounded-full text-white font-medium"
+                style={{
+                  width: 38,
+                  height: 38,
+                  background: "#00ADC1",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: 16,
+                  lineHeight: "140%",
+                }}
+              >
+                GV
+                <span
+                  className="absolute rounded-full"
+                  style={{
+                    width: 8,
+                    height: 8,
+                    left: 30,
+                    top: 30,
+                    background: "#2BB85D",
+                    border: "2px solid #FFFFFF",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </span>
+              <span className="flex flex-row items-center gap-2.5">
+                <span
+                  style={{
+                    fontFamily: "Inter, sans-serif",
+                    fontWeight: 500,
+                    fontSize: 14,
+                    lineHeight: "21px",
+                    color: "#26292A",
+                  }}
+                >
+                  Gerónimo Venzi
+                </span>
+                <ChevronDown className="w-3 h-3" strokeWidth={2} style={{ color: "#00ADC1" }} />
+              </span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-72 p-2 rounded-xl">
+            <div className="flex items-center gap-3 p-2">
+              <span
+                className="relative flex items-center justify-center rounded-full text-white font-medium shrink-0"
+                style={{ width: 38, height: 38, background: "#00ADC1", fontFamily: "Inter, sans-serif", fontSize: 16 }}
+              >
+                GV
+                <span
+                  className="absolute rounded-full"
+                  style={{ width: 8, height: 8, left: 30, top: 30, background: "#2BB85D", border: "2px solid #FFFFFF", boxSizing: "border-box" }}
+                />
+              </span>
+              <div className="flex flex-col">
+                <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: 14, color: "#26292A" }}>
+                  Gerónimo Venzi
+                </span>
+                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "#6B7280" }}>
+                  geronimo.venzi@mjus.gba.gob.ar
+                </span>
+              </div>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-3 py-2.5 cursor-pointer">
+              <UserRound className="w-4 h-4" />
+              <span>Mi Perfil</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="gap-3 py-2.5 cursor-pointer">
+              <Bell className="w-4 h-4" />
+              <span>Notificaciones</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="gap-3 py-2.5 cursor-pointer">
+              <Lock className="w-4 h-4" />
+              <span>Cambiar contraseña</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-3 py-2.5 cursor-pointer" style={{ color: "#DB401A" }}>
+              <LogOut className="w-4 h-4" />
+              <span>Cerrar sesión</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
 
       {/* Title */}
