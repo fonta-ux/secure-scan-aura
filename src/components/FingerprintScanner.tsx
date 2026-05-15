@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import scannerMark from "@/assets/scanner-mark.svg";
 import huellaBuena from "@/assets/huella-buena.svg";
 import huellaMedia from "@/assets/huella-media.svg";
+import huellaMala from "@/assets/huella-mala.svg";
 import huellaSinFoto from "@/assets/huella-sin-foto.svg";
 
 export type ScannerState = "idle" | "reading" | "success" | "missing";
@@ -60,7 +61,8 @@ export function FingerprintScanner({
 
   useEffect(() => {
     if (state === "success") {
-      setCapturedImage(Math.random() < 0.5 ? huellaBuena : huellaMedia);
+      const opts = [huellaBuena, huellaMedia, huellaMala];
+      setCapturedImage(opts[Math.floor(Math.random() * opts.length)]);
     } else if (state === "missing") {
       setCapturedImage(huellaSinFoto);
     } else {
