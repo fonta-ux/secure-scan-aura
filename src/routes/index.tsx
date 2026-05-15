@@ -62,15 +62,13 @@ function Index() {
 
   useEffect(() => {
     if (state !== "success") return;
-    const t = setTimeout(() => {
-      if (captureIndex >= 3) {
+    if (captureIndex >= 3) {
+      const t = setTimeout(() => {
         setCompleted((arr) => [...arr, activeFinger]);
         advanceFinger();
-      } else {
-        setState("reading");
-      }
-    }, 2400);
-    return () => clearTimeout(t);
+      }, 2400);
+      return () => clearTimeout(t);
+    }
   }, [state, captureIndex, activeFinger, advanceFinger]);
 
   const handleSkip = () => {
@@ -79,7 +77,7 @@ function Index() {
     setTimeout(() => advanceFinger(), 1600);
   };
   const handleScan = () => {
-    if (state === "idle") setState("reading");
+    if (state === "idle" || state === "success") setState("reading");
   };
 
   return (
