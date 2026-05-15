@@ -75,7 +75,8 @@ function Index() {
 
   const handleSkip = () => {
     setSkipped((arr) => [...arr, activeFinger]);
-    advanceFinger();
+    setState("missing");
+    setTimeout(() => advanceFinger(), 1600);
   };
   const handleScan = () => {
     if (state === "idle") setState("reading");
