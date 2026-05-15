@@ -85,12 +85,14 @@ export function FingerprintScanner({
     <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">
       {/* Scanner module — Fibonacci proportions, smaller than hand (φ≈1.618) */}
       <div
-        className="relative w-[180px] h-[291px] rounded-[1.5rem] overflow-hidden"
+        className="relative w-[180px] h-[291px] rounded-[1.5rem] overflow-visible"
         style={{
-          background:
-            "linear-gradient(180deg, var(--color-surface), var(--color-surface-elevated))",
-          boxShadow:
-            "0 0 0 1px var(--color-border), 0 24px 60px -28px color-mix(in oklab, var(--color-scanner) 28%, transparent), inset 0 1px 0 oklch(1 0 0 / 0.6)",
+          background: capturedImage
+            ? "transparent"
+            : "linear-gradient(180deg, var(--color-surface), var(--color-surface-elevated))",
+          boxShadow: capturedImage
+            ? "none"
+            : "0 0 0 1px var(--color-border), 0 24px 60px -28px color-mix(in oklab, var(--color-scanner) 28%, transparent), inset 0 1px 0 oklch(1 0 0 / 0.6)",
         }}
       >
         {/* Ambient glow */}
