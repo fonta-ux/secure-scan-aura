@@ -229,27 +229,26 @@ export function FingerprintScanner({
           )}
         </AnimatePresence>
 
-        {/* Missing overlay */}
+        {/* Captured fingerprint image overlay */}
         <AnimatePresence>
-          {state === "missing" && (
+          {capturedImage && (
             <motion.div
+              key={capturedImage + captureIndex + state}
               className="absolute inset-0 flex items-center justify-center"
               style={{
-                background: "color-mix(in oklab, var(--color-background) 55%, transparent)",
-                backdropFilter: "blur(6px)",
+                background: "color-mix(in oklab, var(--color-background) 70%, transparent)",
+                backdropFilter: "blur(4px)",
               }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="text-center px-6">
-                <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
-                  Omitido
-                </div>
-                <div className="text-foreground/90 text-sm">
-                  Dedo no disponible
-                </div>
-              </div>
+              <img
+                src={capturedImage}
+                alt={state === "missing" ? "Huella sin captura" : "Huella capturada"}
+                className="w-[88%] h-auto select-none pointer-events-none"
+              />
             </motion.div>
           )}
         </AnimatePresence>
