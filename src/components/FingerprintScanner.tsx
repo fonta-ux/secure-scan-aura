@@ -2,10 +2,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import scannerMark from "@/assets/scanner-mark.svg";
-import huellaBuena from "@/assets/huella-buena.svg";
-import huellaMedia from "@/assets/huella-media.svg";
-import huellaMala from "@/assets/huella-mala.svg";
-import huellaSinFoto from "@/assets/huella-sin-foto.svg";
 
 export type ScannerState = "idle" | "reading" | "success" | "missing";
 
@@ -57,19 +53,6 @@ export function FingerprintScanner({
       ? "Podés continuar con el siguiente"
       : `${totalCaptures} muestras necesarias`;
 
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (state === "success") {
-      const opts = [huellaBuena, huellaMedia, huellaMala];
-      setCapturedImage(opts[Math.floor(Math.random() * opts.length)]);
-    } else if (state === "missing") {
-      setCapturedImage(huellaSinFoto);
-    } else {
-      setCapturedImage(null);
-    }
-  }, [state, captureIndex]);
-
   useEffect(() => {
     if (state !== "success") {
       setShowSuccessCheck(false);
@@ -85,14 +68,12 @@ export function FingerprintScanner({
     <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">
       {/* Scanner module — Fibonacci proportions, smaller than hand (φ≈1.618) */}
       <div
-        className="relative w-[180px] h-[291px] rounded-[1.5rem] overflow-visible"
+        className="relative w-[180px] h-[291px] rounded-[1.5rem] overflow-hidden"
         style={{
-          background: capturedImage
-            ? "transparent"
-            : "linear-gradient(180deg, var(--color-surface), var(--color-surface-elevated))",
-          boxShadow: capturedImage
-            ? "none"
-            : "0 0 0 1px var(--color-border), 0 24px 60px -28px color-mix(in oklab, var(--color-scanner) 28%, transparent), inset 0 1px 0 oklch(1 0 0 / 0.6)",
+          background:
+            "linear-gradient(180deg, var(--color-surface), var(--color-surface-elevated))",
+          boxShadow:
+            "0 0 0 1px var(--color-border), 0 24px 60px -28px color-mix(in oklab, var(--color-scanner) 28%, transparent), inset 0 1px 0 oklch(1 0 0 / 0.6)",
         }}
       >
         {/* Ambient glow */}
@@ -233,22 +214,27 @@ export function FingerprintScanner({
           )}
         </AnimatePresence>
 
-        {/* Captured fingerprint image — replaces scanner visuals */}
+        {/* Missing overlay */}
         <AnimatePresence>
-          {capturedImage && (
+          {state === "missing" && (
             <motion.div
-              key={capturedImage + captureIndex + state}
-              className="absolute inset-0 flex items-center justify-center z-10"
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-0 flex items-center justify-center"
+              style={{
+                background: "color-mix(in oklab, var(--color-background) 55%, transparent)",
+                backdropFilter: "blur(6px)",
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
-              <img
-                src={capturedImage}
-                alt={state === "missing" ? "Huella sin captura" : "Huella capturada"}
-                className="w-[125%] h-auto select-none pointer-events-none"
-              />
+              <div className="text-center px-6">
+                <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+                  Omitido
+                </div>
+                <div className="text-foreground/90 text-sm">
+                  Dedo no disponible
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
