@@ -56,6 +56,18 @@ export function FingerprintScanner({
       ? "Podés continuar con el siguiente"
       : `${totalCaptures} muestras necesarias`;
 
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (state === "success") {
+      setCapturedImage(Math.random() < 0.5 ? huellaBuena : huellaMedia);
+    } else if (state === "missing") {
+      setCapturedImage(huellaSinFoto);
+    } else {
+      setCapturedImage(null);
+    }
+  }, [state, captureIndex]);
+
   useEffect(() => {
     if (state !== "success") {
       setShowSuccessCheck(false);
