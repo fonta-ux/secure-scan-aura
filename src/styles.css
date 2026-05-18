@@ -1,7 +1,5 @@
-@import "tailwindcss" source(none);
-@source "../src";
-@import "tw-animate-css";
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -39,7 +37,6 @@
 
 :root {
   --radius: 0.75rem;
-  /* Light institutional palette — Gobierno PBA */
   --background: oklch(0.985 0.003 240);
   --foreground: oklch(0.22 0.03 240);
   --surface: oklch(1 0 0);
@@ -61,7 +58,6 @@
   --border: oklch(0.92 0.006 240);
   --input: oklch(0.92 0.006 240);
   --ring: oklch(0.55 0.15 235);
-  /* Institutional teal #00819E */
   --scanner: oklch(0.58 0.10 210);
   --scanner-glow: oklch(0.72 0.11 205);
   --success: oklch(0.62 0.16 155);

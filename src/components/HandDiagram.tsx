@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
-import leftHandSvg from "@/assets/mano-izquierda.svg?raw";
-import rightHandSvg from "@/assets/mano-derecha.svg?raw";
+import leftHandSvgUrl from "@/assets/mano-izquierda.svg?raw";
+import rightHandSvgUrl from "@/assets/mano-derecha.svg?raw";
+
+const leftHandSvg = leftHandSvgUrl;
+const rightHandSvg = rightHandSvgUrl;
 
 interface Props {
   side: "left" | "right";
