@@ -2,16 +2,23 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import scannerMark from "@/assets/scanner-mark.svg";
+import huellaBuenaCalidad from "@/assets/huella-buena-calidad.svg";
+import huellaCalidadMedia from "@/assets/huella-calidad-media.svg";
+import huellaMalaCalidad from "@/assets/huella-mala-calidad.svg";
+import huellaSinFoto from "@/assets/huella-sin-foto.svg";
 
 export type ScannerState = "idle" | "reading" | "success" | "missing";
+export type QualityState = "good" | "medium" | "bad" | "none";
 
 interface Props {
   state: ScannerState;
   fingerLabel: string;
   captureIndex: number; // 0..3 (completed)
   totalCaptures?: number;
+  quality?: QualityState; // quality of completed fingerprint
   onSkip?: () => void;
   onScan?: () => void;
+  onConfirm?: () => void; // confirm after viewing quality result
 }
 
 export function FingerprintScanner({
