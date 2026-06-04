@@ -78,6 +78,40 @@ export function FingerprintScanner({
     return () => window.clearTimeout(timer);
   }, [state, captureIndex]);
 
+  if (result) {
+    const r = RESULT_IMAGES[result];
+    return (
+      <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">
+        <motion.img
+          key={result}
+          src={r.url}
+          alt={r.label}
+          className="w-[200px] h-auto select-none pointer-events-none"
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        />
+        <div className="text-center min-h-[60px]">
+          <div className="text-lg font-medium tracking-tight text-foreground">
+            {result === "missing" ? "Huella no registrada" : "Huella capturada"}
+          </div>
+          <div className="text-sm text-muted-foreground mt-1">
+            {r.label} · Presioná "Escanear huella" para continuar
+          </div>
+        </div>
+        <div className="flex flex-col gap-3 w-[180px] pt-1">
+          <button
+            onClick={onScan}
+            className="h-12 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            style={{ background: "var(--color-scanner)" }}
+          >
+            Escanear huella
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">
       {/* Scanner module — Fibonacci proportions, smaller than hand (φ≈1.618) */}
