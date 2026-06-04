@@ -224,6 +224,7 @@ function Index() {
           captureIndex={captureIndex}
           onSkip={handleSkip}
           onScan={handleScan}
+          result={result}
         />
 
         <HandDiagram
