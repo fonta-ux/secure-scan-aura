@@ -2,8 +2,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import scannerMark from "@/assets/scanner-mark.svg";
+import huellaBuena from "@/assets/huella-buena.svg.asset.json";
+import huellaMedia from "@/assets/huella-media.svg.asset.json";
+import huellaMala from "@/assets/huella-mala.svg.asset.json";
+import huellaSinFoto from "@/assets/huella-sin-foto.svg.asset.json";
 
 export type ScannerState = "idle" | "reading" | "success" | "missing";
+export type FingerResult = "good" | "medium" | "bad" | "missing" | null;
+
+const RESULT_IMAGES: Record<Exclude<FingerResult, null>, { url: string; label: string }> = {
+  good: { url: huellaBuena.url, label: "Calidad buena" },
+  medium: { url: huellaMedia.url, label: "Calidad media" },
+  bad: { url: huellaMala.url, label: "Calidad baja" },
+  missing: { url: huellaSinFoto.url, label: "Sin captura" },
+};
 
 interface Props {
   state: ScannerState;
@@ -12,6 +24,7 @@ interface Props {
   totalCaptures?: number;
   onSkip?: () => void;
   onScan?: () => void;
+  result?: FingerResult;
 }
 
 export function FingerprintScanner({
