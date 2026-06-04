@@ -2,20 +2,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import scannerMark from "@/assets/scanner-mark.svg";
-import huellaBuena from "@/assets/huella-buena.svg.asset.json";
-import huellaMedia from "@/assets/huella-media.svg.asset.json";
-import huellaMala from "@/assets/huella-mala.svg.asset.json";
-import huellaSinFoto from "@/assets/huella-sin-foto.svg.asset.json";
 
 export type ScannerState = "idle" | "reading" | "success" | "missing";
-export type FingerResult = "good" | "medium" | "bad" | "missing" | null;
-
-const RESULT_IMAGES: Record<Exclude<FingerResult, null>, { url: string; label: string }> = {
-  good: { url: huellaBuena.url, label: "Calidad buena" },
-  medium: { url: huellaMedia.url, label: "Calidad media" },
-  bad: { url: huellaMala.url, label: "Calidad baja" },
-  missing: { url: huellaSinFoto.url, label: "Sin captura" },
-};
 
 interface Props {
   state: ScannerState;
@@ -24,7 +12,6 @@ interface Props {
   totalCaptures?: number;
   onSkip?: () => void;
   onScan?: () => void;
-  result?: FingerResult;
 }
 
 export function FingerprintScanner({
@@ -34,7 +21,6 @@ export function FingerprintScanner({
   totalCaptures = 3,
   onSkip,
   onScan,
-  result = null,
 }: Props) {
   const [showSuccessCheck, setShowSuccessCheck] = useState(false);
   const progressPct = Math.min(1, captureIndex / totalCaptures);
@@ -77,76 +63,6 @@ export function FingerprintScanner({
     const timer = window.setTimeout(() => setShowSuccessCheck(true), 250);
     return () => window.clearTimeout(timer);
   }, [state, captureIndex]);
-
-  if (result) {
-    const r = RESULT_IMAGES[result];
-    const bracketColor =
-      result === "good"
-        ? "#9EDCAF"
-        : result === "medium"
-        ? "#F9F49A"
-        : result === "bad"
-        ? "#FFA58B"
-        : "#E5E6E7";
-    return (
-      <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">
-        <div className="relative w-[200px] flex items-center justify-center">
-          <motion.img
-            key={result}
-            src={r.url}
-            alt={r.label}
-            className="w-[200px] h-auto select-none pointer-events-none"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          />
-          {(["tl", "tr", "bl", "br"] as const).map((c) => (
-            <span
-              key={c}
-              aria-hidden
-              className="absolute w-5 h-5"
-              style={{
-                borderColor: bracketColor,
-                ...(c === "tl" && { top: 14, left: 14, borderTop: "1.5px solid", borderLeft: "1.5px solid", borderTopLeftRadius: 8 }),
-                ...(c === "tr" && { top: 14, right: 14, borderTop: "1.5px solid", borderRight: "1.5px solid", borderTopRightRadius: 8 }),
-                ...(c === "bl" && { bottom: 14, left: 14, borderBottom: "1.5px solid", borderLeft: "1.5px solid", borderBottomLeftRadius: 8 }),
-                ...(c === "br" && { bottom: 14, right: 14, borderBottom: "1.5px solid", borderRight: "1.5px solid", borderBottomRightRadius: 8 }),
-              }}
-            />
-          ))}
-        </div>
-        <div className="text-center min-h-[60px]">
-          <div className="text-lg font-medium tracking-tight text-foreground">
-            {result === "missing" ? "Huella no registrada" : "Huella capturada"}
-          </div>
-          <div className="text-sm text-muted-foreground mt-1">
-            {r.label} · Presioná "Escanear huella" para continuar
-          </div>
-        </div>
-        <div className="flex flex-col gap-3 w-[180px] pt-1">
-          <button
-            onClick={onScan}
-            className="h-12 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ background: "var(--color-scanner)" }}
-          >
-            Escanear huella
-          </button>
-          <button
-            disabled
-            className="h-12 rounded-lg text-sm font-semibold opacity-50 cursor-not-allowed"
-            style={{
-              border: "1px solid var(--color-scanner)",
-              color: "var(--color-scanner)",
-              background: "transparent",
-            }}
-          >
-            No registra
-          </button>
-        </div>
-      </div>
-    );
-  }
-
 
   return (
     <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">

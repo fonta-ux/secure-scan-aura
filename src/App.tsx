@@ -1,5 +1,3 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
 import { useEffect, useState, useCallback } from "react";
 import { ChevronDown, UserRound, Lock, LogOut, Bell } from "lucide-react";
 import {
@@ -11,9 +9,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FingerprintScanner, type ScannerState } from "@/components/FingerprintScanner";
 import { HandDiagram } from "@/components/HandDiagram";
-import sibLogo from "@/assets/sib-logo.svg";
-import footerPba from "@/assets/footer-pba.svg";
-import "./styles.css";
+import sibLogo from "@/assets/footer-pba.svg";
+import footerPba from "@/assets/sib-logo.svg";
 
 const FINGER_LABELS: Record<number, string> = {
   1: "el meñique izquierdo",
@@ -28,7 +25,7 @@ const FINGER_LABELS: Record<number, string> = {
   10: "el meñique derecho",
 };
 
-function App() {
+export default function App() {
   const [activeFinger, setActiveFinger] = useState(1);
   const [state, setState] = useState<ScannerState>("idle");
   const [captureIndex, setCaptureIndex] = useState(0);
@@ -228,9 +225,3 @@ function App() {
     </div>
   );
 }
-
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);

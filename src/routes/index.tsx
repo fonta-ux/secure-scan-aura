@@ -1,5 +1,4 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useCallback } from "react";
 import { ChevronDown, UserRound, Lock, LogOut, Bell } from "lucide-react";
 import {
@@ -11,9 +10,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FingerprintScanner, type ScannerState } from "@/components/FingerprintScanner";
 import { HandDiagram } from "@/components/HandDiagram";
-import sibLogo from "@/assets/sib-logo.svg";
-import footerPba from "@/assets/footer-pba.svg";
-import "./styles.css";
+import sibLogo from "@/assets/footer-pba.svg";
+import footerPba from "@/assets/sib-logo.svg";
+
+export const Route = createFileRoute("/")({
+  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Escaneo biométrico — Internos" },
+      { name: "description", content: "Captura biométrica de huellas dactilares para identificación institucional." },
+    ],
+  }),
+});
 
 const FINGER_LABELS: Record<number, string> = {
   1: "el meñique izquierdo",
@@ -28,7 +36,7 @@ const FINGER_LABELS: Record<number, string> = {
   10: "el meñique derecho",
 };
 
-function App() {
+function Index() {
   const [activeFinger, setActiveFinger] = useState(1);
   const [state, setState] = useState<ScannerState>("idle");
   const [captureIndex, setCaptureIndex] = useState(0);
@@ -40,6 +48,8 @@ function App() {
     setState("idle");
     setActiveFinger((f) => Math.min(10, f + 1));
   }, []);
+
+  // El escaneo solo arranca cuando el usuario presiona "Escanear huella"
 
   useEffect(() => {
     if (state !== "reading") return;
@@ -89,6 +99,7 @@ function App() {
             </button>
           </nav>
         </div>
+        {/* avatar_usuario_nombre_rol */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
@@ -228,9 +239,3 @@ function App() {
     </div>
   );
 }
-
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
