@@ -42,14 +42,14 @@ function Index() {
   const [captureIndex, setCaptureIndex] = useState(0);
   const [completed, setCompleted] = useState<number[]>([]);
   const [skipped, setSkipped] = useState<number[]>([]);
+  const [result, setResult] = useState<"good" | "medium" | "bad" | "missing" | null>(null);
 
   const advanceFinger = useCallback(() => {
     setCaptureIndex(0);
     setState("idle");
+    setResult(null);
     setActiveFinger((f) => Math.min(10, f + 1));
   }, []);
-
-  // El escaneo solo arranca cuando el usuario presiona "Escanear huella"
 
   useEffect(() => {
     if (state !== "reading") return;
@@ -65,7 +65,10 @@ function Index() {
     const t = setTimeout(() => {
       if (captureIndex >= 3) {
         setCompleted((arr) => [...arr, activeFinger]);
-        advanceFinger();
+        // Mostrar resultado de calidad — la pantalla espera a que el usuario presione "Escanear huella" para avanzar
+        const qualities = ["good", "medium", "bad"] as const;
+        setResult(qualities[Math.floor(Math.random() * qualities.length)]);
+        setState("idle");
       } else {
         setState("reading");
       }
@@ -74,10 +77,15 @@ function Index() {
   }, [state, captureIndex, activeFinger, advanceFinger]);
 
   const handleSkip = () => {
+    if (result) return;
     setSkipped((arr) => [...arr, activeFinger]);
-    advanceFinger();
+    setResult("missing");
   };
   const handleScan = () => {
+    if (result) {
+      advanceFinger();
+      return;
+    }
     if (state === "idle") setState("reading");
   };
 
@@ -216,6 +224,7 @@ function Index() {
           captureIndex={captureIndex}
           onSkip={handleSkip}
           onScan={handleScan}
+          result={result}
         />
 
         <HandDiagram
