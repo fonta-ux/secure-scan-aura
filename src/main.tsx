@@ -34,10 +34,12 @@ function App() {
   const [captureIndex, setCaptureIndex] = useState(0);
   const [completed, setCompleted] = useState<number[]>([]);
   const [skipped, setSkipped] = useState<number[]>([]);
+  const [result, setResult] = useState<"good" | "medium" | "bad" | "missing" | null>(null);
 
   const advanceFinger = useCallback(() => {
     setCaptureIndex(0);
     setState("idle");
+    setResult(null);
     setActiveFinger((f) => Math.min(10, f + 1));
   }, []);
 
@@ -55,19 +57,26 @@ function App() {
     const t = setTimeout(() => {
       if (captureIndex >= 3) {
         setCompleted((arr) => [...arr, activeFinger]);
-        advanceFinger();
+        const qualities = ["good", "medium", "bad"] as const;
+        setResult(qualities[Math.floor(Math.random() * qualities.length)]);
+        setState("idle");
       } else {
         setState("reading");
       }
     }, 2400);
     return () => clearTimeout(t);
-  }, [state, captureIndex, activeFinger, advanceFinger]);
+  }, [state, captureIndex, activeFinger]);
 
   const handleSkip = () => {
+    if (result) return;
     setSkipped((arr) => [...arr, activeFinger]);
-    advanceFinger();
+    setResult("missing");
   };
   const handleScan = () => {
+    if (result) {
+      advanceFinger();
+      return;
+    }
     if (state === "idle") setState("reading");
   };
 
@@ -205,6 +214,7 @@ function App() {
           captureIndex={captureIndex}
           onSkip={handleSkip}
           onScan={handleScan}
+          result={result}
         />
 
         <HandDiagram
