@@ -80,17 +80,41 @@ export function FingerprintScanner({
 
   if (result) {
     const r = RESULT_IMAGES[result];
+    const bracketColor =
+      result === "good"
+        ? "#9EDCAF"
+        : result === "medium"
+        ? "#F9F49A"
+        : result === "bad"
+        ? "#FFA58B"
+        : "#E5E6E7";
     return (
       <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">
-        <motion.img
-          key={result}
-          src={r.url}
-          alt={r.label}
-          className="w-[200px] h-auto select-none pointer-events-none"
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        />
+        <div className="relative w-[200px] flex items-center justify-center">
+          <motion.img
+            key={result}
+            src={r.url}
+            alt={r.label}
+            className="w-[200px] h-auto select-none pointer-events-none"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          />
+          {(["tl", "tr", "bl", "br"] as const).map((c) => (
+            <span
+              key={c}
+              aria-hidden
+              className="absolute w-5 h-5"
+              style={{
+                borderColor: bracketColor,
+                ...(c === "tl" && { top: 14, left: 14, borderTop: "1.5px solid", borderLeft: "1.5px solid", borderTopLeftRadius: 8 }),
+                ...(c === "tr" && { top: 14, right: 14, borderTop: "1.5px solid", borderRight: "1.5px solid", borderTopRightRadius: 8 }),
+                ...(c === "bl" && { bottom: 14, left: 14, borderBottom: "1.5px solid", borderLeft: "1.5px solid", borderBottomLeftRadius: 8 }),
+                ...(c === "br" && { bottom: 14, right: 14, borderBottom: "1.5px solid", borderRight: "1.5px solid", borderBottomRightRadius: 8 }),
+              }}
+            />
+          ))}
+        </div>
         <div className="text-center min-h-[60px]">
           <div className="text-lg font-medium tracking-tight text-foreground">
             {result === "missing" ? "Huella no registrada" : "Huella capturada"}
@@ -107,10 +131,22 @@ export function FingerprintScanner({
           >
             Escanear huella
           </button>
+          <button
+            disabled
+            className="h-12 rounded-lg text-sm font-semibold opacity-50 cursor-not-allowed"
+            style={{
+              border: "1px solid var(--color-scanner)",
+              color: "var(--color-scanner)",
+              background: "transparent",
+            }}
+          >
+            No registra
+          </button>
         </div>
       </div>
     );
   }
+
 
   return (
     <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">
