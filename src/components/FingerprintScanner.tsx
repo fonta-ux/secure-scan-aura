@@ -34,6 +34,7 @@ export function FingerprintScanner({
   totalCaptures = 3,
   onSkip,
   onScan,
+  result = null,
 }: Props) {
   const [showSuccessCheck, setShowSuccessCheck] = useState(false);
   const progressPct = Math.min(1, captureIndex / totalCaptures);
