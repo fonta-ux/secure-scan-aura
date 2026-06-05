@@ -229,7 +229,7 @@ export function FingerprintScanner({
       {/* Attempt indicator */}
       <div className="flex items-center gap-2.5" role="progressbar" aria-valuenow={attempt} aria-valuemax={maxAttempts}>
         {Array.from({ length: maxAttempts }).map((_, i) => {
-          const used = i < attempt - (state === "result" || state === "committed" ? 0 : 1);
+          const used = i < samplesDone;
           const active = i === attempt - 1 && state === "reading";
           return (
             <div
@@ -266,11 +266,11 @@ export function FingerprintScanner({
           className="h-12 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
           style={{ background: "var(--color-scanner)" }}
         >
-          {primaryLabel}
+          {state === "reading" ? "Capturando…" : "Escanear huella"}
         </button>
         <button
           onClick={onSkip}
-          disabled={state === "reading" || isCommitted}
+          disabled={state === "reading" || allDone}
           className="h-12 rounded-lg text-sm font-semibold transition-colors hover:bg-[color-mix(in_oklab,var(--color-scanner)_8%,transparent)] disabled:opacity-50"
           style={{
             border: "1px solid var(--color-scanner)",
