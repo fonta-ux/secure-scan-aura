@@ -173,7 +173,7 @@ export function FingerprintScanner({
         <AnimatePresence>
           {showQuality && (
             <motion.div
-              key={`q-${quality}-${attempt}`}
+              key={`q-${lastQuality}-${samplesDone}`}
               className="absolute inset-0 flex items-center justify-center"
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -181,8 +181,8 @@ export function FingerprintScanner({
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             >
               <img
-                src={QUALITY_SVG[quality!]}
-                alt={QUALITY_LABEL[quality!]}
+                src={QUALITY_SVG[lastQuality!]}
+                alt={QUALITY_LABEL[lastQuality!]}
                 className="w-full h-full object-contain"
                 draggable={false}
               />
