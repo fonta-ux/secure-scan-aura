@@ -1,23 +1,21 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
 import scannerMark from "@/assets/scanner-mark.svg";
 import qualityGood from "@/assets/quality-good.svg";
 import qualityMedium from "@/assets/quality-medium.svg";
 import qualityBad from "@/assets/quality-bad.svg";
 import qualityNone from "@/assets/quality-none.svg";
 
-export type ScannerState = "idle" | "reading" | "result" | "committed";
+export type ScannerState = "idle" | "reading";
 export type Quality = "good" | "medium" | "bad" | "none";
 
 interface Props {
   state: ScannerState;
   fingerLabel: string;
-  quality?: Quality | null;
-  attempt: number; // current attempt index (1..3)
-  maxAttempts?: number;
+  lastQuality?: Quality | null;
+  samplesDone: number;
+  samplesTotal: number;
   onSkip?: () => void;
   onScan?: () => void;
-  onNext?: () => void;
 }
 
 const QUALITY_SVG: Record<Quality, string> = {
@@ -34,61 +32,37 @@ const QUALITY_LABEL: Record<Quality, string> = {
   none: "Sin registro",
 };
 
-const QUALITY_SUB: Record<Quality, string> = {
-  good: "Huella lista para guardar",
-  medium: "Podés reintentar o continuar",
-  bad: "Reintentá la captura",
-  none: "Dedo marcado como no disponible",
-};
-
 export function FingerprintScanner({
   state,
   fingerLabel,
-  quality,
-  attempt,
-  maxAttempts = 3,
+  lastQuality,
+  samplesDone,
+  samplesTotal,
   onSkip,
   onScan,
-  onNext,
 }: Props) {
-  const showQuality =
-    (state === "result" || state === "committed") && !!quality;
+  const allDone = samplesDone >= samplesTotal;
+  const showQuality = state !== "reading" && allDone && !!lastQuality;
 
-  const statusText = showQuality
-    ? QUALITY_LABEL[quality!]
-    : state === "reading"
-    ? "Capturando…"
-    : `Apoyá ${fingerLabel}`;
+  const statusText =
+    state === "reading"
+      ? "Capturando…"
+      : allDone
+      ? "Huella completa"
+      : `Apoyá ${fingerLabel}`;
 
-  const subText = showQuality
-    ? QUALITY_SUB[quality!]
-    : state === "reading"
-    ? "Mantené el dedo apoyado"
-    : attempt > 1
-    ? `Reintento ${attempt} de ${maxAttempts}`
-    : "Presioná “Escanear huella” para comenzar";
+  const subText =
+    state === "reading"
+      ? `Muestra ${samplesDone + 1} de ${samplesTotal}`
+      : allDone
+      ? "Pasando al siguiente dedo…"
+      : `Muestra ${samplesDone + 1} de ${samplesTotal}`;
 
-  // Action button label / behaviour
-  const canRetry =
-    state === "result" && quality === "bad" && attempt < maxAttempts;
-  const isCommitted = state === "committed";
+  const handlePrimary = () => onScan?.();
 
-  const primaryLabel = isCommitted
-    ? "Siguiente dedo"
-    : state === "result"
-    ? canRetry
-      ? "Reintentar"
-      : "Continuar"
-    : "Escanear huella";
+  const maxAttempts = samplesTotal;
+  const attempt = state === "reading" ? samplesDone + 1 : samplesDone;
 
-  const handlePrimary = () => {
-    if (isCommitted) return onNext?.();
-    if (state === "result") {
-      if (canRetry) return onScan?.();
-      return onNext?.();
-    }
-    return onScan?.();
-  };
 
   return (
     <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">
