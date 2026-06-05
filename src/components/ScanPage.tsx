@@ -221,13 +221,20 @@ export function ScanPage() {
         <FingerprintScanner
           state={state}
           fingerLabel={FINGER_LABELS[activeFinger] ?? "el dedo"}
-          quality={quality}
-          attempt={attempt}
-          maxAttempts={MAX_ATTEMPTS}
+          lastQuality={lastQuality}
+          samplesDone={samples.length}
+          samplesTotal={SAMPLES_PER_FINGER}
           onSkip={handleSkip}
           onScan={handleScan}
-          onNext={handleNext}
         />
+
+        <SamplesWizard
+          fingerLabel={FINGER_LABELS[activeFinger] ?? "el dedo"}
+          samples={samples}
+          total={SAMPLES_PER_FINGER}
+          isReading={state === "reading"}
+        />
+
 
         <HandDiagram
           side="right"
