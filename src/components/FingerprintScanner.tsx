@@ -1,23 +1,21 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
 import scannerMark from "@/assets/scanner-mark.svg";
 import qualityGood from "@/assets/quality-good.svg";
 import qualityMedium from "@/assets/quality-medium.svg";
 import qualityBad from "@/assets/quality-bad.svg";
 import qualityNone from "@/assets/quality-none.svg";
 
-export type ScannerState = "idle" | "reading" | "result" | "committed";
+export type ScannerState = "idle" | "reading";
 export type Quality = "good" | "medium" | "bad" | "none";
 
 interface Props {
   state: ScannerState;
   fingerLabel: string;
-  quality?: Quality | null;
-  attempt: number; // current attempt index (1..3)
-  maxAttempts?: number;
+  lastQuality?: Quality | null;
+  samplesDone: number;
+  samplesTotal: number;
   onSkip?: () => void;
   onScan?: () => void;
-  onNext?: () => void;
 }
 
 const QUALITY_SVG: Record<Quality, string> = {
@@ -34,61 +32,37 @@ const QUALITY_LABEL: Record<Quality, string> = {
   none: "Sin registro",
 };
 
-const QUALITY_SUB: Record<Quality, string> = {
-  good: "Huella lista para guardar",
-  medium: "Podés reintentar o continuar",
-  bad: "Reintentá la captura",
-  none: "Dedo marcado como no disponible",
-};
-
 export function FingerprintScanner({
   state,
   fingerLabel,
-  quality,
-  attempt,
-  maxAttempts = 3,
+  lastQuality,
+  samplesDone,
+  samplesTotal,
   onSkip,
   onScan,
-  onNext,
 }: Props) {
-  const showQuality =
-    (state === "result" || state === "committed") && !!quality;
+  const allDone = samplesDone >= samplesTotal;
+  const showQuality = state !== "reading" && allDone && !!lastQuality;
 
-  const statusText = showQuality
-    ? QUALITY_LABEL[quality!]
-    : state === "reading"
-    ? "Capturando…"
-    : `Apoyá ${fingerLabel}`;
+  const statusText =
+    state === "reading"
+      ? "Capturando…"
+      : allDone
+      ? "Huella completa"
+      : `Apoyá ${fingerLabel}`;
 
-  const subText = showQuality
-    ? QUALITY_SUB[quality!]
-    : state === "reading"
-    ? "Mantené el dedo apoyado"
-    : attempt > 1
-    ? `Reintento ${attempt} de ${maxAttempts}`
-    : "Presioná “Escanear huella” para comenzar";
+  const subText =
+    state === "reading"
+      ? `Muestra ${samplesDone + 1} de ${samplesTotal}`
+      : allDone
+      ? "Pasando al siguiente dedo…"
+      : `Muestra ${samplesDone + 1} de ${samplesTotal}`;
 
-  // Action button label / behaviour
-  const canRetry =
-    state === "result" && quality === "bad" && attempt < maxAttempts;
-  const isCommitted = state === "committed";
+  const handlePrimary = () => onScan?.();
 
-  const primaryLabel = isCommitted
-    ? "Siguiente dedo"
-    : state === "result"
-    ? canRetry
-      ? "Reintentar"
-      : "Continuar"
-    : "Escanear huella";
+  const maxAttempts = samplesTotal;
+  const attempt = state === "reading" ? samplesDone + 1 : samplesDone;
 
-  const handlePrimary = () => {
-    if (isCommitted) return onNext?.();
-    if (state === "result") {
-      if (canRetry) return onScan?.();
-      return onNext?.();
-    }
-    return onScan?.();
-  };
 
   return (
     <div className="relative flex flex-col items-center justify-center gap-5 w-[240px]">
@@ -199,7 +173,7 @@ export function FingerprintScanner({
         <AnimatePresence>
           {showQuality && (
             <motion.div
-              key={`q-${quality}-${attempt}`}
+              key={`q-${lastQuality}-${samplesDone}`}
               className="absolute inset-0 flex items-center justify-center"
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -207,8 +181,8 @@ export function FingerprintScanner({
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             >
               <img
-                src={QUALITY_SVG[quality!]}
-                alt={QUALITY_LABEL[quality!]}
+                src={QUALITY_SVG[lastQuality!]}
+                alt={QUALITY_LABEL[lastQuality!]}
                 className="w-full h-full object-contain"
                 draggable={false}
               />
@@ -255,7 +229,7 @@ export function FingerprintScanner({
       {/* Attempt indicator */}
       <div className="flex items-center gap-2.5" role="progressbar" aria-valuenow={attempt} aria-valuemax={maxAttempts}>
         {Array.from({ length: maxAttempts }).map((_, i) => {
-          const used = i < attempt - (state === "result" || state === "committed" ? 0 : 1);
+          const used = i < samplesDone;
           const active = i === attempt - 1 && state === "reading";
           return (
             <div
@@ -292,11 +266,11 @@ export function FingerprintScanner({
           className="h-12 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
           style={{ background: "var(--color-scanner)" }}
         >
-          {primaryLabel}
+          {state === "reading" ? "Capturando…" : "Escanear huella"}
         </button>
         <button
           onClick={onSkip}
-          disabled={state === "reading" || isCommitted}
+          disabled={state === "reading" || allDone}
           className="h-12 rounded-lg text-sm font-semibold transition-colors hover:bg-[color-mix(in_oklab,var(--color-scanner)_8%,transparent)] disabled:opacity-50"
           style={{
             border: "1px solid var(--color-scanner)",

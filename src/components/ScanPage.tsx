@@ -12,6 +12,7 @@ import {
   type ScannerState,
   type Quality,
 } from "@/components/FingerprintScanner";
+import { SamplesWizard } from "@/components/SamplesWizard";
 import { HandDiagram } from "@/components/HandDiagram";
 import sibLogo from "@/assets/sib-logo.svg";
 import footerPba from "@/assets/footer-pba.svg";
@@ -29,78 +30,65 @@ const FINGER_LABELS: Record<number, string> = {
   10: "el meñique derecho",
 };
 
-const MAX_ATTEMPTS = 3;
+const SAMPLES_PER_FINGER = 3;
 
 function pickQuality(): Quality {
-  // Random good / medium / bad
   const r = Math.random();
-  if (r < 0.34) return "good";
-  if (r < 0.7) return "medium";
+  if (r < 0.5) return "good";
+  if (r < 0.85) return "medium";
   return "bad";
 }
 
 export function ScanPage() {
   const [activeFinger, setActiveFinger] = useState(1);
   const [state, setState] = useState<ScannerState>("idle");
-  const [attempt, setAttempt] = useState(1); // 1..MAX_ATTEMPTS
-  const [quality, setQuality] = useState<Quality | null>(null);
+  const [samples, setSamples] = useState<Quality[]>([]);
+  const [lastQuality, setLastQuality] = useState<Quality | null>(null);
   const [completed, setCompleted] = useState<number[]>([]);
   const [skipped, setSkipped] = useState<number[]>([]);
 
-  const resetForNextFinger = useCallback(() => {
+  const advanceFinger = useCallback(() => {
+    setSamples([]);
+    setLastQuality(null);
     setState("idle");
-    setAttempt(1);
-    setQuality(null);
     setActiveFinger((f) => Math.min(10, f + 1));
   }, []);
 
-  // Reading → result (after 1/4s like prior)
+  // Reading → capture one sample
   useEffect(() => {
     if (state !== "reading") return;
     const t = setTimeout(() => {
       const q = pickQuality();
-      // If we've reached the last attempt and result would still be retryable bad,
-      // commit as bad regardless.
-      const isFinalAttempt = attempt >= MAX_ATTEMPTS;
-      const final: Quality = isFinalAttempt && q === "bad" ? "bad" : q;
-      setQuality(final);
-      // Good or medium → committed immediately; bad on final attempt → committed
-      if (final === "good" || final === "medium" || isFinalAttempt) {
-        setState("committed");
-      } else {
-        setState("result");
-      }
-    }, 250);
+      setLastQuality(q);
+      setSamples((arr) => {
+        const next = [...arr, q];
+        if (next.length >= SAMPLES_PER_FINGER) {
+          // Finger complete
+          setCompleted((c) => [...c, activeFinger]);
+          // Defer advancing so the last sample flashes briefly
+          setTimeout(() => advanceFinger(), 500);
+        } else {
+          setState("idle");
+        }
+        return next;
+      });
+    }, 900);
     return () => clearTimeout(t);
-  }, [state, attempt]);
+  }, [state, activeFinger, advanceFinger]);
 
   const handleScan = () => {
-    if (state === "idle") {
-      setState("reading");
-      return;
-    }
-    if (state === "result" && quality === "bad" && attempt < MAX_ATTEMPTS) {
-      setAttempt((a) => a + 1);
-      setQuality(null);
+    if (state === "idle" && samples.length < SAMPLES_PER_FINGER) {
       setState("reading");
     }
-  };
-
-  const handleNext = () => {
-    if (state !== "committed") return;
-    if (quality === "none") {
-      setSkipped((arr) => [...arr, activeFinger]);
-    } else {
-      setCompleted((arr) => [...arr, activeFinger]);
-    }
-    resetForNextFinger();
   };
 
   const handleSkip = () => {
-    if (state === "reading" || state === "committed") return;
-    setQuality("none");
-    setState("committed");
+    if (state === "reading") return;
+    setSkipped((arr) => [...arr, activeFinger]);
+    advanceFinger();
   };
+
+
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans">
@@ -233,13 +221,20 @@ export function ScanPage() {
         <FingerprintScanner
           state={state}
           fingerLabel={FINGER_LABELS[activeFinger] ?? "el dedo"}
-          quality={quality}
-          attempt={attempt}
-          maxAttempts={MAX_ATTEMPTS}
+          lastQuality={lastQuality}
+          samplesDone={samples.length}
+          samplesTotal={SAMPLES_PER_FINGER}
           onSkip={handleSkip}
           onScan={handleScan}
-          onNext={handleNext}
         />
+
+        <SamplesWizard
+          fingerLabel={FINGER_LABELS[activeFinger] ?? "el dedo"}
+          samples={samples}
+          total={SAMPLES_PER_FINGER}
+          isReading={state === "reading"}
+        />
+
 
         <HandDiagram
           side="right"
