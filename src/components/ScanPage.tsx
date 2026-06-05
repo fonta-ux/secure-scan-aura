@@ -12,7 +12,6 @@ import {
   type ScannerState,
   type Quality,
 } from "@/components/FingerprintScanner";
-import { SamplesWizard } from "@/components/SamplesWizard";
 import { HandDiagram } from "@/components/HandDiagram";
 import sibLogo from "@/assets/sib-logo.svg";
 import footerPba from "@/assets/footer-pba.svg";
