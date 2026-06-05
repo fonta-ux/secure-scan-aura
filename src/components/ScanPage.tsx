@@ -225,14 +225,8 @@ export function ScanPage() {
           samplesTotal={SAMPLES_PER_FINGER}
           onSkip={handleSkip}
           onScan={handleScan}
-        />
 
-        <SamplesWizard
-          fingerLabel={FINGER_LABELS[activeFinger] ?? "el dedo"}
-          samples={samples}
-          total={SAMPLES_PER_FINGER}
-          isReading={state === "reading"}
-        />
+
 
 
         <HandDiagram
