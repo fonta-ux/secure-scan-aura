@@ -225,6 +225,10 @@ export function ScanPage() {
           samplesTotal={SAMPLES_PER_FINGER}
           onSkip={handleSkip}
           onScan={handleScan}
+          samples={samples}
+        />
+
+
 
 
 
