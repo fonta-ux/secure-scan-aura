@@ -30,6 +30,7 @@ const FINGER_LABELS: Record<number, string> = {
 };
 
 const SAMPLES_PER_FINGER = 3;
+const MAX_ATTEMPTS = 3;
 
 function pickQuality(): Quality {
   const r = Math.random();
@@ -45,10 +46,13 @@ export function ScanPage() {
   const [lastQuality, setLastQuality] = useState<Quality | null>(null);
   const [completed, setCompleted] = useState<number[]>([]);
   const [skipped, setSkipped] = useState<number[]>([]);
+  /** attempts already spent on the current (pending) slot */
+  const [slotAttempts, setSlotAttempts] = useState(0);
 
   const advanceFinger = useCallback(() => {
     setSamples([]);
     setLastQuality(null);
+    setSlotAttempts(0);
     setState("idle");
     setActiveFinger((f) => Math.min(10, f + 1));
   }, []);
@@ -59,21 +63,33 @@ export function ScanPage() {
     const t = setTimeout(() => {
       const q = pickQuality();
       setLastQuality(q);
+      const nextAttempts = slotAttempts + 1;
+
+      // Bad result but still has retries → don't commit, stay on same slot
+      if (q === "bad" && nextAttempts < MAX_ATTEMPTS) {
+        setSlotAttempts(nextAttempts);
+        setState("idle");
+        // We push a transient "bad" sample so the slot shows red/retry,
+        // and remove it on the next scan attempt.
+        setSamples((arr) => [...arr.slice(0, arr.length), ]); // no-op, kept for clarity
+        return;
+      }
+
+      // Commit the sample (good, medium, or bad after 3 attempts)
       setSamples((arr) => {
         const next = [...arr, q];
         if (next.length >= SAMPLES_PER_FINGER) {
-          // Finger complete
           setCompleted((c) => [...c, activeFinger]);
-          // Defer advancing so the last sample flashes briefly
-          setTimeout(() => advanceFinger(), 500);
+          setTimeout(() => advanceFinger(), 600);
         } else {
+          setSlotAttempts(0);
           setState("idle");
         }
         return next;
       });
     }, 900);
     return () => clearTimeout(t);
-  }, [state, activeFinger, advanceFinger]);
+  }, [state, activeFinger, advanceFinger, slotAttempts]);
 
   const handleScan = () => {
     if (state === "idle" && samples.length < SAMPLES_PER_FINGER) {
@@ -86,6 +102,25 @@ export function ScanPage() {
     setSkipped((arr) => [...arr, activeFinger]);
     advanceFinger();
   };
+
+  // Build per-slot statuses including the in-flight retry state
+  const slotStatuses = (() => {
+    const out: Array<"pending" | "scanning" | "good" | "medium" | "bad"> = [];
+    for (let i = 0; i < SAMPLES_PER_FINGER; i++) {
+      const q = samples[i];
+      if (q === "good") out.push("good");
+      else if (q === "medium") out.push("medium");
+      else if (q === "bad") out.push("bad");
+      else if (i === samples.length) {
+        // current slot
+        if (state === "reading") out.push("scanning");
+        else if (slotAttempts > 0 && lastQuality === "bad") out.push("bad");
+        else out.push("pending");
+      } else out.push("pending");
+    }
+    return out;
+  })();
+
 
 
 
@@ -223,10 +258,15 @@ export function ScanPage() {
           lastQuality={lastQuality}
           samplesDone={samples.length}
           samplesTotal={SAMPLES_PER_FINGER}
+          slotStatuses={slotStatuses}
+          currentIndex={samples.length}
+          currentAttempts={slotAttempts}
+          maxAttempts={MAX_ATTEMPTS}
           onSkip={handleSkip}
           onScan={handleScan}
           samples={samples}
         />
+
 
 
 
