@@ -258,10 +258,15 @@ export function ScanPage() {
           lastQuality={lastQuality}
           samplesDone={samples.length}
           samplesTotal={SAMPLES_PER_FINGER}
+          slotStatuses={slotStatuses}
+          currentIndex={samples.length}
+          currentAttempts={slotAttempts}
+          maxAttempts={MAX_ATTEMPTS}
           onSkip={handleSkip}
           onScan={handleScan}
           samples={samples}
         />
+
 
 
 
