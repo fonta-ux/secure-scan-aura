@@ -219,22 +219,7 @@ export function FingerprintScanner({
                   className="block h-[124px] w-auto"
                   draggable={false}
                 />
-                <span
-                  className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 text-[10px] font-semibold tracking-wide px-2 py-[2px] rounded-full bg-white shadow-sm"
-                  style={{
-                    color: SLOT_COLOR[status],
-                    border: `1px solid ${SLOT_COLOR[status]}33`,
-                  }}
-                >
-                  Muestra {i + 1}
-                </span>
               </div>
-              <span
-                className="text-xs font-medium"
-                style={{ color: SLOT_COLOR[status] }}
-              >
-                {SLOT_LABEL[status]}
-              </span>
             </motion.div>
           );
         })}
