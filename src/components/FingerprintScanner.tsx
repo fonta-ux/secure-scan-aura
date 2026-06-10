@@ -5,7 +5,6 @@ import sampleMedium from "@/assets/sample-medium.svg";
 import sampleBad from "@/assets/sample-bad.svg";
 import samplePending from "@/assets/sample-pending.svg";
 import sampleScanning from "@/assets/sample-scanning.svg";
-import fingerComplete from "@/assets/finger-complete.svg";
 import { AnimatePresence } from "framer-motion";
 
 export type ScannerState = "idle" | "reading";
@@ -183,6 +182,62 @@ export function FingerprintScanner({
             }}
           />
         ))}
+
+        {/* Success overlay when all 3 samples are captured */}
+        <AnimatePresence>
+          {allDone && (
+            <motion.div
+              key="scanner-success"
+              className="absolute inset-0 flex items-center justify-center"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 50%, color-mix(in oklab, #1F9D55 18%, transparent) 0%, color-mix(in oklab, var(--color-surface) 92%, transparent) 70%)",
+                backdropFilter: "blur(2px)",
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+            >
+              <motion.svg
+                width="92"
+                height="92"
+                viewBox="0 0 92 92"
+                fill="none"
+                initial={{ scale: 0.4, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 240, damping: 16 }}
+                style={{
+                  filter:
+                    "drop-shadow(0 0 18px color-mix(in oklab, #1F9D55 55%, transparent))",
+                }}
+              >
+                <motion.circle
+                  cx="46"
+                  cy="46"
+                  r="40"
+                  stroke="#1F9D55"
+                  strokeWidth="4"
+                  fill="color-mix(in oklab, #1F9D55 10%, transparent)"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                />
+                <motion.path
+                  d="M28 47 L42 60 L66 34"
+                  stroke="#1F9D55"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.4, delay: 0.35, ease: "easeOut" }}
+                />
+              </motion.svg>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Title block */}
@@ -200,61 +255,31 @@ export function FingerprintScanner({
       </div>
 
       {/* Sample cards using uploaded SVGs */}
-      <div className="flex items-end gap-3 w-full justify-center min-h-[140px]">
-        <AnimatePresence mode="wait" initial={false}>
-          {allDone ? (
+      <div className="flex items-end gap-3 w-full justify-center">
+        {statuses.map((status, i) => {
+          const isActive = i === activeIdx && !allDone;
+          return (
             <motion.div
-              key="complete"
-              initial={{ scale: 0.7, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 220, damping: 18 }}
-              className="flex items-center justify-center"
+              key={i}
+              initial={false}
+              animate={{
+                scale: isActive && state === "reading" ? 1.03 : 1,
+                y: isActive ? -2 : 0,
+              }}
+              transition={{ duration: 0.25 }}
+              className="flex flex-col items-center gap-1.5"
             >
-              <motion.img
-                src={fingerComplete}
-                alt="Huella cargada satisfactoriamente"
-                className="block h-[150px] w-auto"
-                draggable={false}
-                animate={{ scale: [1, 1.06, 1] }}
-                transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-              />
+              <div className="relative">
+                <img
+                  src={SLOT_SVG[status]}
+                  alt={`Muestra ${i + 1} ${SLOT_LABEL[status]}`}
+                  className="block h-[124px] w-auto"
+                  draggable={false}
+                />
+              </div>
             </motion.div>
-          ) : (
-            <motion.div
-              key="slots"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex items-end gap-3"
-            >
-              {statuses.map((status, i) => {
-                const isActive = i === activeIdx && !allDone;
-                return (
-                  <motion.div
-                    key={i}
-                    initial={false}
-                    animate={{
-                      scale: isActive && state === "reading" ? 1.03 : 1,
-                      y: isActive ? -2 : 0,
-                    }}
-                    transition={{ duration: 0.25 }}
-                    className="flex flex-col items-center gap-1.5"
-                  >
-                    <div className="relative">
-                      <img
-                        src={SLOT_SVG[status]}
-                        alt={`Muestra ${i + 1} ${SLOT_LABEL[status]}`}
-                        className="block h-[124px] w-auto"
-                        draggable={false}
-                      />
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          )}
-        </AnimatePresence>
+          );
+        })}
       </div>
 
       {/* Action buttons */}
