@@ -80,7 +80,8 @@ export function ScanPage() {
         const next = [...arr, q];
         if (next.length >= SAMPLES_PER_FINGER) {
           setCompleted((c) => [...c, activeFinger]);
-          setTimeout(() => advanceFinger(), 600);
+          setState("idle");
+          // No auto-advance: wait for the user to press "Continuar"
         } else {
           setSlotAttempts(0);
           setState("idle");
@@ -92,9 +93,13 @@ export function ScanPage() {
   }, [state, activeFinger, advanceFinger, slotAttempts]);
 
   const handleScan = () => {
-    if (state === "idle" && samples.length < SAMPLES_PER_FINGER) {
-      setState("reading");
+    if (state === "reading") return;
+    if (samples.length >= SAMPLES_PER_FINGER) {
+      // All done → user confirms to move on
+      advanceFinger();
+      return;
     }
+    if (state === "idle") setState("reading");
   };
 
   const handleSkip = () => {

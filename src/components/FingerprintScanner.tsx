@@ -221,7 +221,7 @@ export function FingerprintScanner({
                   fill="color-mix(in oklab, #1F9D55 10%, transparent)"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  transition={{ duration: 0.9, ease: "easeInOut" }}
                 />
                 <motion.path
                   d="M28 47 L42 60 L66 34"
@@ -232,7 +232,7 @@ export function FingerprintScanner({
                   fill="none"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 0.4, delay: 0.35, ease: "easeOut" }}
+                  transition={{ duration: 0.7, delay: 1.1, ease: "easeOut" }}
                 />
               </motion.svg>
             </motion.div>
@@ -247,7 +247,7 @@ export function FingerprintScanner({
         </div>
         <div className="text-sm text-muted-foreground mt-1">
           {allDone
-            ? "Pasando al siguiente dedo…"
+            ? "Lectura 3/3 completa"
             : isRetry
               ? `Calidad insuficiente. Reintento ${currentAttempts + 1} de ${maxAttempts}`
               : `${samplesTotal} muestras necesarias`}
@@ -286,17 +286,23 @@ export function FingerprintScanner({
       <div className="flex flex-col gap-3 w-[220px] pt-1">
         <button
           onClick={onScan}
-          disabled={state === "reading" || allDone}
+          disabled={state === "reading"}
           className="h-12 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
           style={{
-            background: isRetry ? "#DB401A" : "var(--color-scanner)",
+            background: isRetry
+              ? "#DB401A"
+              : allDone
+                ? "#1F9D55"
+                : "var(--color-scanner)",
           }}
         >
           {state === "reading"
             ? "Capturando…"
-            : isRetry
-              ? "Reintentar huella"
-              : "Escanear huella"}
+            : allDone
+              ? "Continuar con el siguiente dedo"
+              : isRetry
+                ? "Reintentar huella"
+                : "Escanear huella"}
         </button>
         <button
           onClick={onSkip}
