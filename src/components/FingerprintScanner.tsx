@@ -200,61 +200,31 @@ export function FingerprintScanner({
       </div>
 
       {/* Sample cards using uploaded SVGs */}
-      <div className="flex items-end gap-3 w-full justify-center min-h-[140px]">
-        <AnimatePresence mode="wait" initial={false}>
-          {allDone ? (
+      <div className="flex items-end gap-3 w-full justify-center">
+        {statuses.map((status, i) => {
+          const isActive = i === activeIdx && !allDone;
+          return (
             <motion.div
-              key="complete"
-              initial={{ scale: 0.7, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 220, damping: 18 }}
-              className="flex items-center justify-center"
+              key={i}
+              initial={false}
+              animate={{
+                scale: isActive && state === "reading" ? 1.03 : 1,
+                y: isActive ? -2 : 0,
+              }}
+              transition={{ duration: 0.25 }}
+              className="flex flex-col items-center gap-1.5"
             >
-              <motion.img
-                src={fingerComplete}
-                alt="Huella cargada satisfactoriamente"
-                className="block h-[150px] w-auto"
-                draggable={false}
-                animate={{ scale: [1, 1.06, 1] }}
-                transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-              />
+              <div className="relative">
+                <img
+                  src={SLOT_SVG[status]}
+                  alt={`Muestra ${i + 1} ${SLOT_LABEL[status]}`}
+                  className="block h-[124px] w-auto"
+                  draggable={false}
+                />
+              </div>
             </motion.div>
-          ) : (
-            <motion.div
-              key="slots"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex items-end gap-3"
-            >
-              {statuses.map((status, i) => {
-                const isActive = i === activeIdx && !allDone;
-                return (
-                  <motion.div
-                    key={i}
-                    initial={false}
-                    animate={{
-                      scale: isActive && state === "reading" ? 1.03 : 1,
-                      y: isActive ? -2 : 0,
-                    }}
-                    transition={{ duration: 0.25 }}
-                    className="flex flex-col items-center gap-1.5"
-                  >
-                    <div className="relative">
-                      <img
-                        src={SLOT_SVG[status]}
-                        alt={`Muestra ${i + 1} ${SLOT_LABEL[status]}`}
-                        className="block h-[124px] w-auto"
-                        draggable={false}
-                      />
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          )}
-        </AnimatePresence>
+          );
+        })}
       </div>
 
       {/* Action buttons */}
