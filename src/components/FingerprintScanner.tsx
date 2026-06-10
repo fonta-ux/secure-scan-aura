@@ -5,7 +5,6 @@ import sampleMedium from "@/assets/sample-medium.svg";
 import sampleBad from "@/assets/sample-bad.svg";
 import samplePending from "@/assets/sample-pending.svg";
 import sampleScanning from "@/assets/sample-scanning.svg";
-import fingerComplete from "@/assets/finger-complete.svg";
 import { AnimatePresence } from "framer-motion";
 
 export type ScannerState = "idle" | "reading";
