@@ -221,7 +221,7 @@ export function FingerprintScanner({
                   fill="color-mix(in oklab, #1F9D55 10%, transparent)"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  transition={{ duration: 0.9, ease: "easeInOut" }}
                 />
                 <motion.path
                   d="M28 47 L42 60 L66 34"
@@ -232,7 +232,7 @@ export function FingerprintScanner({
                   fill="none"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 0.4, delay: 0.35, ease: "easeOut" }}
+                  transition={{ duration: 0.7, delay: 1.1, ease: "easeOut" }}
                 />
               </motion.svg>
             </motion.div>
