@@ -183,6 +183,62 @@ export function FingerprintScanner({
             }}
           />
         ))}
+
+        {/* Success overlay when all 3 samples are captured */}
+        <AnimatePresence>
+          {allDone && (
+            <motion.div
+              key="scanner-success"
+              className="absolute inset-0 flex items-center justify-center"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 50%, color-mix(in oklab, #1F9D55 18%, transparent) 0%, color-mix(in oklab, var(--color-surface) 92%, transparent) 70%)",
+                backdropFilter: "blur(2px)",
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+            >
+              <motion.svg
+                width="92"
+                height="92"
+                viewBox="0 0 92 92"
+                fill="none"
+                initial={{ scale: 0.4, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 240, damping: 16 }}
+                style={{
+                  filter:
+                    "drop-shadow(0 0 18px color-mix(in oklab, #1F9D55 55%, transparent))",
+                }}
+              >
+                <motion.circle
+                  cx="46"
+                  cy="46"
+                  r="40"
+                  stroke="#1F9D55"
+                  strokeWidth="4"
+                  fill="color-mix(in oklab, #1F9D55 10%, transparent)"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                />
+                <motion.path
+                  d="M28 47 L42 60 L66 34"
+                  stroke="#1F9D55"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.4, delay: 0.35, ease: "easeOut" }}
+                />
+              </motion.svg>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Title block */}
