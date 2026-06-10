@@ -286,17 +286,23 @@ export function FingerprintScanner({
       <div className="flex flex-col gap-3 w-[220px] pt-1">
         <button
           onClick={onScan}
-          disabled={state === "reading" || allDone}
+          disabled={state === "reading"}
           className="h-12 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
           style={{
-            background: isRetry ? "#DB401A" : "var(--color-scanner)",
+            background: isRetry
+              ? "#DB401A"
+              : allDone
+                ? "#1F9D55"
+                : "var(--color-scanner)",
           }}
         >
           {state === "reading"
             ? "Capturando…"
-            : isRetry
-              ? "Reintentar huella"
-              : "Escanear huella"}
+            : allDone
+              ? "Continuar con el siguiente dedo"
+              : isRetry
+                ? "Reintentar huella"
+                : "Escanear huella"}
         </button>
         <button
           onClick={onSkip}
