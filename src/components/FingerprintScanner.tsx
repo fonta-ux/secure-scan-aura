@@ -247,7 +247,7 @@ export function FingerprintScanner({
         </div>
         <div className="text-sm text-muted-foreground mt-1">
           {allDone
-            ? "Pasando al siguiente dedo…"
+            ? "Lectura 3/3 completa"
             : isRetry
               ? `Calidad insuficiente. Reintento ${currentAttempts + 1} de ${maxAttempts}`
               : `${samplesTotal} muestras necesarias`}
